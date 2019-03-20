@@ -1,0 +1,18 @@
+{
+  "name": "simp",
+  "version": "1.0.0",
+  "description": "A simple react-like blog generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "hadroncfy",
+  "license": "MIT",
+  "dependencies": {
+    "js-yaml": "^3.12.2"
+  },
+  "devDependencies": {}
+}
