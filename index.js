@@ -15,6 +15,7 @@ function footer(e){
 module.exports = app => {
     let c = app.component;
     let e = c.createElement;
-    let ret = e('html', null)
-        .append(headTag(e));
+    let ret = e('html', null, 
+        headTag(e),
+    );
 }
