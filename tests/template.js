@@ -8,7 +8,7 @@ let metaList = cp.template(
 );
 
 function f(){
-    
+
 }
 
 let t = cp.template(
@@ -22,11 +22,17 @@ let t = cp.template(
         '<body>',
             '<ul>',
                 cp._forOf(["rfnj", "hkm", "soor"], t => 
-                    `<li>${t}</li>`
+                    cp.template(
+                        '<li>',
+                            cp._forOf(["a", "b", "c"], t => 
+                                `<em>${t}</em>`
+                            ),
+                        '</li>'
+                    )
                 ),
             '</ul>',
             '<p>',
-                cp._for(0, 30, i => 
+                cp._for({ start: 0, end: 30 }, i => 
                     `level ${i}, `
                 ),
             '</p>',
