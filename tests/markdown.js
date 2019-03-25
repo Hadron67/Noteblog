@@ -3,10 +3,6 @@ const assert = require('assert');
 
 let parser = md.createParser();
 
-function t(...arg){
-    return arg.join('');
-}
-
 describe("Parse markdown file into HTML", function(){
     function testParse(dest, input, ...expect){
         it (dest, function(){
@@ -21,10 +17,11 @@ describe("Parse markdown file into HTML", function(){
         });
     }
 
-    testParse('Single line input with bold and italic text', "Hi, *there*! Can **you** here me?",
+    testParse('Single line input with bold and italic text', "Hi, *there*! Can **you** here me? ~~hkm~~",
         "<article>",
             "<p>",
-                "Hi, <em>there</em>! Can <strong>you</strong> here me?",
+                "Hi, <em>there</em>! Can <strong>you</strong> here me? ",
+                "<del>hkm</del>",
             "</p>",
         "</article>"
     );
@@ -49,7 +46,11 @@ describe("Parse markdown file into HTML", function(){
     testParse('Mathjax', "The $a_0b_2$, a_0b_2",
         '<article>',
             '<p>',
-                'The $a_0b_2$, a<em>0b</em>2',
+                'The ',
+                '<script type="math/tex">',
+                    'a_0b_2',
+                '</script>',
+                ', a<em>0b</em>2',
             '</p>',
         '</article>'
     );
@@ -193,6 +194,93 @@ describe("Parse markdown file into HTML", function(){
                 '</li>',
             '</ul>',
             '<p>hkm</p>',
+        '</article>'
+    );
+
+    testParse('Seperator', `
+    rehty
+    ***
+    rhyt
+    `,
+        '<article>',
+            '<p>rehty</p>',
+            '<hr />',
+            '<p>rhyt</p>',
+        '</article>'
+    );
+
+    testParse('Code blocks', `
+# head1
+rfnj, \`hkm_\`
+q\`
+\`\`\`dichuu
+thyvrtvh
+\`\`\`
+    `, 
+        '<article>',
+            '<h1>head1</h1>',
+            '<p>rfnj, <code>hkm_</code><br />q`</p>',
+            '<code lang="dichuu">',
+                'thyvrtvh\n',
+            '</code>',
+        '</article>'
+    );
+
+    testParse('Code blocks within quote block', `
+    # Hkm
+    > \`\`\`dichuu
+    > > rfnj
+    > \`\`\`
+    > soor
+    `, 
+        '<article>',
+            '<h1>Hkm</h1>',
+            '<blockquote>',
+                '<code lang="dichuu">> rfnj\n</code>',
+                '<p>soor</p>',
+            '</blockquote>',
+        '</article>'
+    );
+
+    dtestParse('Tables', `
+    | A | B |
+    |:-:|:-|
+    |1*2*3|4**5**6|This column will be ignored|
+
+    > |hkm|soor|
+    > |rfnj|zkle|
+    # head
+    `, 
+        '<article>',
+            '<table>',
+                '<thead>',
+                    '<tr>',
+                        '<td align="center">A </td>',
+                        '<td align="left">B </td>',
+                    '</tr>',
+                '</thead>',
+                '<tbody>',
+                    '<tr>',
+                        '<td>1<em>2</em>3</td>',
+                        '<td>4<strong>5</strong>6</td>',
+                    '</tr>',
+                '</tbody>',
+            '</table>',
+            '<blockquote>',
+                '<table>',
+                    '<tbody>',
+                        '<tr>',
+                            '<td>hkm</td>',
+                            '<td>soor</td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td>rfnj</td>',
+                            '<td>zkle</td>',
+                        '</tr>',
+                    '</tbody>',
+                '</table>',
+            '</blockquote>',
+            '<h1>head</h1>',
         '</article>'
     );
 });
