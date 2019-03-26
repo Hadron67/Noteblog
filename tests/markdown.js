@@ -55,6 +55,31 @@ describe("Parse markdown file into HTML", function(){
         '</article>'
     );
 
+    testParse('Block mathjax', `
+# Mathjax test
+> rfnj
+* soor
+$$
+\\vec B = \\nabla\\cdot\\vec A
+$$
+
+hkm
+    `, 
+        '<article>',
+            '<h1>Mathjax test</h1>',
+            '<blockquote>',
+                '<p>rfnj</p>',
+            '</blockquote>',
+            '<ul>',
+                '<li>soor</li>',
+            '</ul>',
+            '<script type="math/tex" mode="display">', 
+                '\n\\vec B = \\nabla\\cdot\\vec A\n',
+            '</script>',
+            '<p>hkm</p>',
+        '</article>'
+    );
+
     testParse('Malformed italic and bold text', 'iureh**gc*\nh*n\ntr**rt *',
         '<article>',
             '<p>',
@@ -242,7 +267,7 @@ thyvrtvh
         '</article>'
     );
 
-    dtestParse('Tables', `
+    testParse('Tables', `
     | A | B |
     |:-:|:-|
     |1*2*3|4**5**6|This column will be ignored|
@@ -281,6 +306,28 @@ thyvrtvh
                 '</table>',
             '</blockquote>',
             '<h1>head</h1>',
+        '</article>'
+    );
+
+    testParse('Html tags', `
+    # Html test
+    <!-- toc -->
+    <img src="hkm" />
+    <div class="text">
+        <a>soor</a>
+    </div>
+    rfnj, <ems>bniz</ems>
+    `, 
+        '<article>',
+            '<h1>Html test</h1>',
+            '<!--toc-->',
+            '<img src="hkm"></img>',
+            '<div class="text">',
+                '<a>soor</a>',
+            '</div>',
+            '<p>',
+                'rfnj, <ems>bniz</ems>',
+            '</p>',
         '</article>'
     );
 });
