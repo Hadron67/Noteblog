@@ -1,3 +1,5 @@
+/* eslint-env node, mocha */
+
 const md = require('../lib/markdown.js');
 const assert = require('assert');
 
@@ -12,6 +14,7 @@ describe("Parse markdown file into HTML", function(){
 
     function dtestParse(dest, input, ...expect){
         it (dest, function(){
+            // eslint-disable-next-line no-debugger
             debugger;
             assert.strictEqual(md.toDefautHTML(parser.parse(input).articleNodes), expect.join(''));
         });
@@ -309,12 +312,12 @@ thyvrtvh
         '</article>'
     );
 
-    testParse('Html tags', `
+    dtestParse('Html tags', `
     # Html test
     <!-- toc -->
     <img src="hkm" />
-    <div class="text">
-        <a>soor</a>
+    <div class=text>
+        a   n<a>soor</a>
     </div>
     rfnj, <ems>bniz</ems>
     `, 
@@ -323,7 +326,7 @@ thyvrtvh
             '<!--toc-->',
             '<img src="hkm"></img>',
             '<div class="text">',
-                '<a>soor</a>',
+                'a   n<a>soor</a>',
             '</div>',
             '<p>',
                 'rfnj, <ems>bniz</ems>',
