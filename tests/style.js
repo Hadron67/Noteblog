@@ -11,7 +11,7 @@ s.load({
         clear: 'both'
     },
     'div.$btn': {
-        backgroundColor : '#f0f0f0',
+        backgroundColor: '#f0f0f0',
         width: '30px',
         '$$:hover': {
             backgroundColor: '#e0e0e0'
