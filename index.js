@@ -25,17 +25,13 @@ function mainPage(){
     let config = {title: 'Test'};
 
     return {
-        handleRequest(req, res){
-            res.setHeader('Content-Type', 'text/html');
-            res.write(cp.render(html, {config}));
-            res.end();
+        handle(resolve, reject){
+            resolve(cp.render(html, {config}));
         },
-        generate: () => {
-
-        }
+        isStatic: false
     };
 }
 
-app.registerRaw('/index.html', mainPage);
+app.registerRaw('/index.html', mainPage());
 
 app.startServer(8080);
