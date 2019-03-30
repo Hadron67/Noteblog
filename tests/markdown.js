@@ -197,6 +197,21 @@ hkm
         '</article>'
     );
 
+    testParse('List seperation', `
+    * hkm
+    
+    * soor
+    `, 
+        '<article>',
+            '<ul>',
+                '<li>hkm</li>',
+            '</ul>',
+            '<ul>',
+                '<li>soor</li>',
+            '</ul>',
+        '</article>'
+    );
+
     testParse("A bit more complicated nested lists and quote blocks", `
     * > * > * hkm
       >   > * rfnj
