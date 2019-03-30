@@ -3,8 +3,7 @@ layout: post
 date: 2019-3-30 14:28:38 +0800
 title: Test
 ---
-This is a test page $\vec B = \nabla\times\vec A$
-rtherth **<br>**
+This is a test page $\vec B = \nabla\times\vec A$ **Scientia gravis est, praeter non mens et anima est.** Vestibulum tortor quam, *feugiat vitae*, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed rtherth **<br>**
 
 <!-- more -->
 
@@ -27,13 +26,13 @@ $$
 $$
 
 sdfsdf
-> rthey
+> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.
 
 <GithubImage src="hkm" />
 
 <![CDATA[]]>
 
-## Some old blog
+# Some old blog
 ## 一次方程
 和三维空间一样，我们来讨论一下四维空间中直线、面、当然，还有胞的方程。
 直线方程和胞方程都比较简单，直线可以类比三维空间的，胞由于有法向量，所以可以类比三维的平面方程。关键是平面方程，四维的平面没有法向量，不能直接类比。

@@ -15,7 +15,7 @@ module.exports = app => {
     
     app.registerModule('templates.js');
     
-    app.scss.register('/css/main.css', 'src/sass/main.scss');
+    app.scss.register('/css/main.css', ['src/sass/main.scss', 'src/sass/article.scss']);
     
     fs.readdir('src/posts', (err, files) => {
         let posts = files.filter(f => f.endsWith('.md')).map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f));
