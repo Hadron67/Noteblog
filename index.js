@@ -1,6 +1,9 @@
 'use strict';
 
 let app = require('./lib/main.js')();
-require('./blog.config.js')(app);
-
-app.startServer(8080);
+let r = require('./blog.config.js')(app);
+if (r.then){
+    r.then(() => app.startServer(8080));
+}
+else
+    app.startServer(8080);

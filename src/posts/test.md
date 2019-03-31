@@ -3,16 +3,23 @@ layout: post
 date: 2019-3-30 14:28:38 +0800
 title: Test
 ---
-This is a test page $\vec B = \nabla\times\vec A$ **Scientia gravis est, praeter non mens et anima est.** Vestibulum tortor quam, *feugiat vitae*, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed rtherth **<br>**
+```mathjax-defs
+\def\dd{\mathrm{d}}
+\def\pd#1#2{\frac{\partial #1}{\partial #2}}
+```
+**This is just a test post, it doesn't contain anything make sense, just ignore it...**
+
+This is a test page $\vec B = \nabla\times\vec A$ **Scientia gravis est, praeter non mens et anima est.** Vestibulum tortor quam, *feugiat vitae*, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed rtherth.
 
 <!-- more -->
+## A title in excerpt
 
 [Wikipedia](https://wikipedia.com)
 Maxwell's equations:
 $$
 \begin{cases}
-    \nabla\times\vec B & = \epsilon_0\mu_0\vec j + \epsilon_0\frac{\partial\vec E}{\partial t}\\
-    \nabla\times\vec E & = -\frac{\partial\vec B}{\partial t}\\
+    \nabla\times\vec B & = \epsilon_0\mu_0\vec j + \epsilon_0\pd{\vec E}t\\
+    \nabla\times\vec E & = -\pd{\vec B}t\\
     \nabla\cdot\vec B & = 0\\
     \nabla\cdot\vec E & = \frac{\rho_f}{\epsilon_0}
 \end{cases}
@@ -20,20 +27,20 @@ $$
 Exterior differential form:
 $$
 \begin{cases}
-    \mathrm{d}{}^\star F & = \mu_0{}^\star J\\
-    \mathrm{d}F & = 0
+    \dd{}^\star F & = \mu_0{}^\star J\\
+    \dd F & = 0
 \end{cases}
 $$
 
-sdfsdf
+## A title containing equation $\Omega$
 > Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.
 
 <GithubImage src="hkm" />
 
 <![CDATA[]]>
 
-# Some old blog
-## 一次方程
+## Some old blog
+### 一次方程
 和三维空间一样，我们来讨论一下四维空间中直线、面、当然，还有胞的方程。
 直线方程和胞方程都比较简单，直线可以类比三维空间的，胞由于有法向量，所以可以类比三维的平面方程。关键是平面方程，四维的平面没有法向量，不能直接类比。
 * 参数方程　最容易想到的应该是参数式方程，如果有两个在面中而且不平行的矢量$\vec{a},\vec{b}$，那么面中发的任何一个矢量都可是表示成$\vec{l}=\mu\vec{a}+\lambda\vec{b}$，只要我们再知道平面过的任何一点的坐标，就可以写出它的参数方程。
@@ -48,6 +55,8 @@ sdfsdf
 
 
 下一篇文章我们就会用到这两种四维“基本地形”。
+
+$\Gamma\left(TM^n\right) = \left\{X\mid X:M^n\to TM^n \text{是个切向量场}\right\}.$
 
 ## 思考题
 请找出环面（即甜甜圈形）的四维类比并想出截面动画。你会发现如果用解析法会更容易得出答案，但缺乏直观性。
