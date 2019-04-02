@@ -2,6 +2,7 @@
 
 let escapeS = main.helper.escapeS;
 let escapeHTML = main.helper.escapeHTML;
+let regulateName = main.helper.regulateName;
 
 function _forOf(a, cb){
     let ret = [];
@@ -49,7 +50,7 @@ let outter = content => [
     '</html>'
 ];
 
-let postInfo = article => {
+let postInfo = (article, arg) => {
     let date = article.date;
     return [
         '<div class="article-info-container">',
@@ -60,50 +61,55 @@ let postInfo = article => {
                 '</time>',
             '</span>',
             _if(article.category, () => [
-                '<span class="post-info-icon"> | ',
-                    `<a href="#"><i class="fas fa-folder-open"></i>${article.category}</a>`,
+                '<span class="post-info-icon"><i class="mf-mid"></i>',
+                    `<a href="${escapeS(arg.category)}/${regulateName(article.category)}/" title="Category: ${escapeS(article.category)}">`,
+                        `<i class="fas fa-folder-open"></i>${escapeHTML(article.category)}`, 
+                    '</a>',
                 '</span>',
             ]),
         '</div>',
     ];
 };
 
-let postTags = article => {
+let postTags = (article, arg) => {
     if (article.tags.length === 0){
         return '';
     }
     return [
-        '<footer>',
+        '<footer class="post-footer">',
             article.tags.map(tag => [
-                `<a href="#"><i class="fas fa-tag"></i>${tag}</a>`,
+                `<a href="${escapeS(arg.tags)}/${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
+                    `<i class="fas fa-tag"></i>${escapeHTML(tag)}`,
+                '</a>',
             ]),
         '</footer>'
     ];
 };
 
-let postLike = (article, header, content) => [
+let postLike = (article, header, content, arg) => [
     '<div class="article-outter-container">',
         '<article>',
             '<header class="article-title-container">',
                 '<h1 class="article-title">', 
                     header,                
                 '</h1>',
-                postInfo(article),
+                postInfo(article, arg),
             '</header>',
             '<div class="article-inner-container">',
                 content,
             '</div>',
-            postTags(article),
+            postTags(article, arg),
         '</article>',
     '</div>',
 ];
 
-let post = article => outter(postLike(article,
+let post = ({article, arg}) => outter(postLike(article,
     `<h1 class="article-title">${escapeHTML(article.title)}</h1>`,
-    article.content
+    article.content,
+    arg
 ));
 
-let page = pages => outter(pages.map(page => [
+let page = ({pages, arg}) => outter(pages.map(page => [
     '<div class="post-entry">',
         postLike(page.article,
             `<a class="article-title" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
@@ -111,10 +117,27 @@ let page = pages => outter(pages.map(page => [
                 '<p class="article-more-btn">',
                     `<a href="${escapeS(page.path)}">Read more</a>`,
                 '</p>'
-            ]
+            ],
+            arg
         ),
     '</div>'
 ]));
 
+function partitionByDate(pages){
+    let ret = [];
+    
+}
+
+let postList = ({pages, arg}) => outter([
+    '<ul class="post-list">',
+        pages.map(page => [
+            '<li>',
+                `<a href="${page.path}">${page.article.title}</a>`,
+            '</li>'
+        ]),
+    '</ul>'
+]);
+
 main.layouts.post = post;
 main.layouts.page = page;
+main.layouts.tag = postList;

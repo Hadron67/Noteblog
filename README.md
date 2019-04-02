@@ -8,6 +8,7 @@ Styles are inspired from these following blog themes or sites:
 * Hexo theme [Landscape Plus](https://github.com/xiangming/landscape-plus), which is the theme of my old blog;
 * Jekyll theme [Jacman](https://github.com/Simpleyyt/jekyll-jacman);
 * The style of level 2 headings in the posts is inspired from another Jekyll theme on [jekylltheme.org](http://jekyllthemes.org), but I couldn't find it now.
+* The purple strip on top of each post entry was inspired from [chorer](https://chorer.github.io).
 
 Libraries used:
 * All dependnecies in `package.json`;

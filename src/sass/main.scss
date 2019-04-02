@@ -68,7 +68,15 @@ $main-container-media-width: 650px;
 }
 
 .post-entry {
-    padding-bottom: 20px;
+    padding-bottom: 40px;
+}
+i.mf-mid {
+    padding-left: 5px;
+    padding-right: 5px;
+    &::before {
+        content: "|";
+        font-style: normal;
+    }
 }
 
 @import "article.scss"

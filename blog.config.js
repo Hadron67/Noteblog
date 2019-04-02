@@ -4,7 +4,7 @@ const fs = require('fs');
 
 function compareDate(a, b){
     let d1 = a.article.date, d2 = b.article.date;
-    return d1 > d2 ? -1 : d1 < d2 ? 1 : 0;
+    return d1 < d2;
 }
 
 function addNewLineToEnds(s){
@@ -59,10 +59,14 @@ function getMyRenderer(app){
     };
 }
 
+function indexToPageName(base){
+    return i => base + (i === 1 ? '/index.html' : `/page-${i}.html`);
+}
+
 module.exports = async (app) => {
     app.config = {
         title: 'Blog de CFY',
-        mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
+        mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML',
         fontawsomeURL : 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         webRoot: 'docs'
     };
@@ -77,10 +81,36 @@ module.exports = async (app) => {
     app.scss.register('/css/main.css', ['src/sass/main.scss', 'src/sass/article.scss']);
 
     // posts
+    let postArg = {
+        tags: '/tags',
+        archive: '/archive',
+        category: '/category'
+    };
     let postFiles = (await app.helper.readFiles('src/posts')).filter(f => f.endsWith('.md'));
-    let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f));
-    app.pageGroup()
-            .registerAll(posts)
-            .paginate(arg => app.layouts.page(arg), i => i === 1 ? '/index.html' : `/page-${i}.html`, compareDate, 5)
-            .on('load', () => app.logger.info('All posts loaded'));
+    let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, postArg));
+    let pg = app.pageGroup().registerAll(posts);
+    pg.once('update', () => app.logger.info('All posts loaded'));
+    let mainPage = new app.helper.Paginator(pg.getPages(), arg => app.layouts.page(arg), indexToPageName(''), 5, postArg);
+    let tags = new app.helper.Categorizer(
+        postArg.tags,
+        a => app.layouts.tag(a),
+        indexToPageName(''),
+        compareDate,
+        20,
+        postArg
+    );
+    pg.on('update', (p, page) => {
+        pg.sortPages(compareDate);
+        mainPage.update();
+
+        if (page === void 0){
+            for (let p of pg.getPages()){
+                tags.update(p, p.article.tags);
+            }
+        }
+        else {
+            tags.update(page, page.article.tags);
+        }
+        tags.commitUpdate();
+    });
 };

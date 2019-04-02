@@ -20,18 +20,25 @@ $inner-padding-small: 15px;
 }
 
 .article-inner-container {
-    padding-top: 10px;
-    padding-bottom: 20px;
+    padding-top: 30px;
+    padding-bottom: 25px;
     @include inner-padding();
 
     blockquote {
-        border-left: 5px solid #eee;
-        padding-left: 15px;
+        border-left: 5px solid #f6b73c;
+        background-color: #fff3d4;
+        padding: 15px 0px 15px 15px;
         font-style: italic;
         color: #777;
+        > p:last-child {
+            margin-bottom: 0px;
+        }
     }
     p, blockquote, hr, h1, div.head2-wrapper, h3, h4, h5, pre, ul, ol {
         margin-bottom: 15px;
+    }
+    p:last-child {
+        margin-bottom: 0px;
     }
     h1, h2, h3, h4, h5 {
         font-weight: 500;
@@ -86,7 +93,7 @@ $inner-padding-small: 15px;
         font-size: $base-font-size * 1.1;
     }
     div.head2-wrapper {
-        border-left: #40f solid 7px;
+        border-left: #88f solid 5px;
         background-color: lighten($color: #40f, $amount: 48%);
         padding-top: 5px;
         padding-bottom: 5px;
@@ -104,34 +111,32 @@ $inner-padding-small: 15px;
 .article-outter-container {
     overflow: hidden;
     background-color: #fff;
-    padding-top: 20px;
     box-shadow: 0 1px 4px #ccc;
+    border-top: #aae solid 5px;
+}
 
-    article {
-        footer {
-            border-top: #eee solid 1px;
-            padding: 10px 20px;
-            a {
-                i {
-                    margin-right: 2px;
-                }
-                display: inline-block;
-                color: #888;
-                background-color: #eee;
-                margin-top: 2px;
-                margin-right: 10px;
-                margin-bottom: 2px;
-                text-decoration: none;
-                padding: 5px 10px;
-                border-radius: 5px;
-                border: #eee solid 1px;
+.post-footer {
+    border-top: #eee solid 1px;
+    padding: 10px 20px;
+    a {
+        i {
+            margin-right: 2px;
+        }
+        display: inline-block;
+        color: $base-font-color;
+        background-color: #eee;
+        margin-top: 2px;
+        margin-right: 10px;
+        margin-bottom: 2px;
+        text-decoration: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: #eee solid 1px;
 
-                transition: all 0.15s linear;
-                &:hover {
-                    border: #e00 solid 1px;
-                    color: #e00;
-                }
-            }
+        transition: all 0.15s linear;
+        &:hover {
+            border: #e00 solid 1px;
+            color: #e00;
         }
     }
 }
@@ -157,7 +162,8 @@ $article-info-color: #999;
 
 .article-title-container {
     padding-bottom: 20px;
-    // border-bottom: #eee solid 1px;
+    padding-top: 20px;
+    border-bottom: #eee solid 1px;
     @include inner-padding();
 }
 .article-info-container {
