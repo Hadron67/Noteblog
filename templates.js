@@ -39,6 +39,7 @@ let head = () => [
 ];
 
 let outter = content => [
+    '<!DOCTYPE html>',
     '<html>',
         head(),
         '<body>',
@@ -56,7 +57,7 @@ let postInfo = (article, arg) => {
         '<div class="article-info-container">',
             '<span class="post-info-icon">', 
                 '<i class="fas fa-calendar-alt"></i>', 
-                `<time class="post-date" title="Created on" datetime="${date.toString()}">`,
+                `<time class="post-date" title="Created on" datetime="${date.toISOString()}">`,
                     `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
                 '</time>',
             '</span>',
@@ -104,12 +105,12 @@ let postLike = (article, header, content, arg) => [
 ];
 
 let post = ({article, arg}) => outter(postLike(article,
-    `<h1 class="article-title">${escapeHTML(article.title)}</h1>`,
+    escapeHTML(article.title),
     article.content,
     arg
 ));
 
-let page = ({pages, arg}) => outter(pages.map(page => [
+let page = ({pages, arg}) => outter(pages.getPages().map(page => [
     '<div class="post-entry">',
         postLike(page.article,
             `<a class="article-title" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
@@ -130,7 +131,7 @@ function partitionByDate(pages){
 
 let postList = ({pages, arg}) => outter([
     '<ul class="post-list">',
-        pages.map(page => [
+        pages.getPages().map(page => [
             '<li>',
                 `<a href="${page.path}">${page.article.title}</a>`,
             '</li>'

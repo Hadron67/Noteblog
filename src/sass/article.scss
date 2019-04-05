@@ -93,8 +93,9 @@ $inner-padding-small: 15px;
         font-size: $base-font-size * 1.1;
     }
     div.head2-wrapper {
-        border-left: #88f solid 5px;
-        background-color: lighten($color: #40f, $amount: 48%);
+        border-left: #66f solid 5px;
+        color: #66f;
+        // background-color: lighten($color: #40f, $amount: 48%);
         padding-top: 5px;
         padding-bottom: 5px;
         clear: both;
@@ -112,7 +113,7 @@ $inner-padding-small: 15px;
     overflow: hidden;
     background-color: #fff;
     box-shadow: 0 1px 4px #ccc;
-    border-top: #aae solid 5px;
+    border-top: #66e solid 5px;
 }
 
 .post-footer {

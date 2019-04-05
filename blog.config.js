@@ -65,7 +65,7 @@ function indexToPageName(base){
 
 module.exports = async (app) => {
     app.config = {
-        title: 'Blog de CFY',
+        title: "Hadroncfy's Notebook",
         mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML',
         fontawsomeURL : 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         webRoot: 'docs'
@@ -88,10 +88,8 @@ module.exports = async (app) => {
     };
     let postFiles = (await app.helper.readFiles('src/posts')).filter(f => f.endsWith('.md'));
     let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, postArg));
-    let pg = app.pageGroup().registerAll(posts);
-    pg.once('update', () => app.logger.info('All posts loaded'));
-    let mainPage = new app.helper.Paginator(pg.getPages(), arg => app.layouts.page(arg), indexToPageName(''), 5, postArg);
-    let tags = new app.helper.Categorizer(
+    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName(''), 5, postArg);
+    let tags = new app.helper.Tags(
         postArg.tags,
         a => app.layouts.tag(a),
         indexToPageName(''),
@@ -99,18 +97,12 @@ module.exports = async (app) => {
         20,
         postArg
     );
-    pg.on('update', (p, page) => {
-        pg.sortPages(compareDate);
-        mainPage.update();
-
-        if (page === void 0){
-            for (let p of pg.getPages()){
-                tags.update(p, p.article.tags);
-            }
+    let pg = new app.helper.PageGroup((page, n) => {
+        if (n){
+            mainPage.add(page).update();
         }
-        else {
-            tags.update(page, page.article.tags);
-        }
-        tags.commitUpdate();
+        tags.update(page, page.article.tags);
     });
+    let listener = page => pg.update(page);
+    posts.forEach(p => p.on('update', listener));
 };
