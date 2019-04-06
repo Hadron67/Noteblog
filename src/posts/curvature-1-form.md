@@ -12,7 +12,7 @@ In differential geometry, and especially in general relativity, the Riemann curv
 <!-- more -->
 
 ## Definitions
-Among textbooks and lectures, there're two different definitions of Riemann curvature tensor:
+Among textbooks and lectures, there're two different yet equivalent definitions of Riemann curvature tensor:
 $$
 \begin{align}
 2\nabla_{[a}\nabla_{b]}\omega_c & = R_{abc}{}^d \omega_d; \\

@@ -93,8 +93,8 @@ $inner-padding-small: 15px;
         font-size: $base-font-size * 1.1;
     }
     div.head2-wrapper {
-        border-left: #66f solid 5px;
-        color: #66f;
+        border-left: #44f solid 5px;
+        color: #44f;
         // background-color: lighten($color: #40f, $amount: 48%);
         padding-top: 5px;
         padding-bottom: 5px;
@@ -116,9 +116,11 @@ $inner-padding-small: 15px;
     border-top: #66e solid 5px;
 }
 
+$tag-btn-padding: 12px;
+
 .post-footer {
     border-top: #eee solid 1px;
-    padding: 10px 20px;
+    padding: $tag-btn-padding / 2 20px $tag-btn-padding / 2 20px;
     a {
         i {
             margin-right: 2px;
@@ -126,9 +128,7 @@ $inner-padding-small: 15px;
         display: inline-block;
         color: $base-font-color;
         background-color: #eee;
-        margin-top: 2px;
-        margin-right: 10px;
-        margin-bottom: 2px;
+        margin: $tag-btn-padding / 2 10px $tag-btn-padding / 2 0px;
         text-decoration: none;
         padding: 5px 10px;
         border-radius: 5px;
@@ -170,12 +170,7 @@ $article-info-color: #999;
 .article-info-container {
     color: $article-info-color;
     // font-size: $base-font-size * 0.8;
-    padding-left: 10px;
-}
-.post-info-icon {
-    i {
-        padding-right: 5px;
-    }
+
     a {
         color: $article-info-color;
         &:hover {
@@ -183,6 +178,16 @@ $article-info-color: #999;
             text-decoration: none;
         }
     }
+}
+.post-info-icon {
+    i {
+        padding-right: 5px;
+    }
+}
+.post-meta-block {
+    display: inline-block;
+    padding-right: 8px;
+    margin-bottom: 2px;
 }
 .article-more-btn {
     a {

@@ -2,6 +2,11 @@
 
 const fs = require('fs');
 
+global.requireNew = path => {
+    delete require.cache[require.resolve(path)];
+    return require(path);
+}
+
 function compareDate(a, b){
     let d1 = a.article.date, d2 = b.article.date;
     return d1 < d2;
@@ -49,7 +54,7 @@ function getMyRenderer(app){
         }
 
         getHeadingNodeID(node){
-            if (node.children.length === 1 && node.children[0].type === app.markdown.NodeType.TEXT){
+            if (node.children.length === 1 && node.children[0].type === NodeType.TEXT){
                 let ret = node.children[0].val.trim();
                 return ret.replace(/[A-Z]/g, c => c.toLowerCase()).replace(/[ ]+/g, '-');
             }
@@ -73,12 +78,16 @@ module.exports = async (app) => {
 
     app.markdown.setRenderer(getMyRenderer(app));
     
-    await app.helper.registerModule('templates.js');
+    app.helper.registerModule('./templates.js');
 
     // Image files
     (await app.helper.readFiles('docs/static/img/2019')).forEach(f => app.static.register('/static/img/2019/' + f));
     
-    app.scss.register('/css/main.css', ['src/sass/main.scss', 'src/sass/article.scss']);
+    app.scss.register('/css/main.css', [
+        'src/sass/main.scss',
+        'src/sass/article.scss',
+        'src/sass/category.scss'
+    ]);
 
     // posts
     let postArg = {
@@ -87,21 +96,30 @@ module.exports = async (app) => {
         category: '/category'
     };
     let postFiles = (await app.helper.readFiles('src/posts')).filter(f => f.endsWith('.md'));
-    let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, postArg));
-    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName(''), 5, postArg);
+    let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, {arg: postArg}));
+    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName(''), 5, {arg: postArg});
     let tags = new app.helper.Tags(
         postArg.tags,
         a => app.layouts.tag(a),
         indexToPageName(''),
         compareDate,
         20,
-        postArg
+        {arg: postArg}
+    );
+    let category = new app.helper.Categorizer(
+        postArg.category,
+        a => app.layouts.category(a),
+        indexToPageName(''),
+        compareDate,
+        20,
+        {arg: postArg}
     );
     let pg = new app.helper.PageGroup((page, n) => {
         if (n){
             mainPage.add(page).update();
         }
-        tags.update(page, page.article.tags);
+        page.article.tags.length > 0 && tags.update(page, page.article.tags);
+        page.article.category && category.update(page, page.article.category);
     });
     let listener = page => pg.update(page);
     posts.forEach(p => p.on('update', listener));
