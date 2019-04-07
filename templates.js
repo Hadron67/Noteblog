@@ -5,11 +5,12 @@ module.exports = main => {
     let escapeS = main.helper.escapeS;
     let escapeHTML = main.helper.escapeHTML;
     let regulateName = main.helper.regulateName;
+    let monthNames = ['January', 'February', 'March', 'April', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
-    function _forOf(a, cb){
+    function _forIn(obj, cb){
         let ret = [];
-        for (let i of a){
-            ret.push(cb(i));
+        for (let k in obj){
+            ret.push(cb(k, obj[k]));
         }
         return ret;
     }
@@ -34,8 +35,8 @@ module.exports = main => {
             '<title>',
                 escapeHTML(config.title),
             '</title>',
+            '<link href="/css/main.css" type="text/css" rel="stylesheet">',
             metaTags,
-            '<link href="/css/main.css" rel="stylesheet">',
             fontawesome(),
         '</head>'
     ];
@@ -55,7 +56,7 @@ module.exports = main => {
     
     function articleCategoryList(pathBase, categoryPath){
         let list = [];
-        let path = pathBase + '/';
+        let path = pathBase;
         for (let name of categoryPath){
             path += `${name}/`;
             list.push({name, path});
@@ -112,7 +113,7 @@ module.exports = main => {
         return [
             '<footer class="post-footer">',
                 article.tags.map(tag => [
-                    `<a href="${escapeS(arg.tags)}/${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
+                    `<a href="${escapeS(arg.tags)}${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
                         `<i class="fas fa-tag"></i>${escapeHTML(tag)}`,
                     '</a>',
                 ]),
@@ -146,7 +147,7 @@ module.exports = main => {
     let page = ({pages, arg}) => outter(pages.getPages().map(page => [
         '<div class="post-entry">',
             postLike(page.article,
-                `<a class="article-title" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
+                `<a class="article-title-link" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
                     page.article.summary,
                     '<p class="article-more-btn">',
                         `<a href="${escapeS(page.path)}">Read more</a>`,
@@ -159,7 +160,17 @@ module.exports = main => {
     
     function partitionByDate(pages){
         let ret = [];
-        
+        for (let p of pages){
+            let top = ret[ret.length - 1];
+            let date = p.date;
+            if (top.date.getFullYear() === date.getFullYear() && top.date.getMonth() === date.getMonth()){
+                top.pages.push(p);
+            }
+            else {
+                ret.push({date, page: p});
+            }
+        }
+        return ret;
     }
     
     let postList = ({pages, arg}) => outter([
@@ -175,15 +186,33 @@ module.exports = main => {
     let category = ({node, pathBase, arg}) => outter([
         '<div class="category-outter-container">',
             '<header>',
-                `<a href="${escapeS(pathBase)}/">Category</a>`,
+                `<a href="${escapeS(pathBase)}">Category</a>`,
                 node.getPath().map(n => [
                     '<span class="category-divider">',
                         '<i class="fas fa-chevron-right"></i>',
                     '</span>',
-                    `<a href="${escapeS(pathBase)}/${n.getPath().map(p => regulateName(p.name)).join('/')}/">${escapeHTML(n.name)}</a>`,
+                    `<a href="${escapeS(pathBase)}${n.getPath().map(p => regulateName(p.name) + '/').join('')}">${escapeHTML(n.name)}</a>`,
                 ]),
             '</header>',
-        '</div>'
+            () => {
+                let subcat = node.getSubcategories();
+                let p = pathBase + node.getPath().map(n => regulateName(n.name) + '/').join('');
+                if (subcat.length > 0){
+                    return [
+                        '<ul class="subcategory-container">',
+                            subcat.map(c => [
+                                `<li><a class="category-btn" href="${p}${regulateName(c)}/">`,
+                                    '<span class="category-file-icon"><i class="fas fa-folder-open"></i></span>',
+                                    `${c}`,
+                                `</a></li>`
+                            ]),
+                        '</ul>'
+                    ];
+                }
+                else 
+                    return '';
+            },
+        '</div>',
     ]);
     
     main.layouts.post = post;

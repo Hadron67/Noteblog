@@ -2,6 +2,7 @@
 title: Ray tracing in curved spacetime
 layout: post
 date: 2019-3-31 20:39:55 +0800
+category: Gallery
 tags:
 - General relativity
 ---

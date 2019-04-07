@@ -2,7 +2,7 @@
 layout: post
 title:  "Long time no see!"
 date:   2019-03-19 22:03:01 +0800
-categories: jekyll
+category: jekyll
 ---
 As you may have noticed, my site haven't been updated for almost 3 years! This could results from that I have been busy with a lot things, such as exams, final thesis, plus that I'm running out of ideas. But now, I'm in a relatively free period and I want to keep my blog from being abandonded.
 

@@ -3,6 +3,7 @@ $base-font-size:   16px !default;
 $base-font-weight: 400 !default;
 $small-font-size:  $base-font-size * 0.875 !default;
 $base-line-height: 1.5 !default;
+$plastic-green: #3cb371;
 
 $spacing-unit:     30px !default;
 
@@ -20,6 +21,43 @@ $spacing-unit:     30px !default;
     padding-left: $outter-padding;
     padding-right: $outter-padding;
 }
+
+@mixin underline-animation-center($bottom, $height, $color){
+    position: relative;
+    &::before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: $height;
+        bottom: $bottom;
+        left: 50%;
+        background-color: $color;
+        // transition: all 0.2s ease-in-out;
+        @include the-transition();
+    }
+    &:hover::before {
+        width: 100%;
+        left: 0;
+        right: auto;
+    }
+}
+
+@mixin shadow-base(){
+    box-shadow: 0 1px 4px #aaa;
+}
+
+@mixin the-transition(){
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
+}
+
+$link-color: #e32d40 !default;
+$link-hover-color: #00e;
+
+$top-border-color: #55f;
+
+$main-container-media-width: 650px;
 
 * {
     @include box-sizing-b(border-box);
@@ -44,18 +82,15 @@ body {
     clear: both;
 }
 
-$link-color: #e32d40;
 
 a {
     text-decoration: none;
     color: $link-color;
-    transition: color 0.15s linear;
     &:hover {
-        color: #00e;
+        color: $link-hover-color;
     }
 }
 
-$main-container-media-width: 650px;
 
 .main-container {
     padding-left: 100px;
@@ -66,18 +101,10 @@ $main-container-media-width: 650px;
     }
 }
 
-$top-border-color: #55f;
 
 .post-entry {
     padding-bottom: 40px;
 }
-span.category-divider {
-    font-size: $base-font-size * 0.6;
-    padding-right: 5px;
-    padding-left: 5px;
-    text-align: center;
-    vertical-align: .125em;// XXX: A result of tweaking
-}
 
-@import "category.scss";
 @import "article.scss";
+@import "category.scss";

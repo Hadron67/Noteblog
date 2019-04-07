@@ -112,8 +112,8 @@ $inner-padding-small: 15px;
 .article-outter-container {
     overflow: hidden;
     background-color: #fff;
-    box-shadow: 0 1px 4px #ccc;
-    border-top: #66e solid 5px;
+    border-top: $top-border-color solid 3px;
+    @include shadow-base();
 }
 
 $tag-btn-padding: 12px;
@@ -122,9 +122,6 @@ $tag-btn-padding: 12px;
     border-top: #eee solid 1px;
     padding: $tag-btn-padding / 2 20px $tag-btn-padding / 2 20px;
     a {
-        i {
-            margin-right: 2px;
-        }
         display: inline-block;
         color: $base-font-color;
         background-color: #eee;
@@ -133,11 +130,15 @@ $tag-btn-padding: 12px;
         padding: 5px 10px;
         border-radius: 5px;
         border: #eee solid 1px;
-
-        transition: all 0.15s linear;
+        
+        // transition: all 0.15s linear;
+        @include the-transition();
         &:hover {
             border: #e00 solid 1px;
             color: #e00;
+        }
+        i {
+            margin-right: 2px;
         }
     }
 }
@@ -150,13 +151,14 @@ h1.article-title {
         font-size: $base-font-size * 2.125;
     }
 }
-a.article-title {
+.article-title-link {
     color: $base-font-color;
-    transition: all 0.15s linear;
+    @include the-transition();
     &:hover {
         color: $link-color;
         text-decoration: none;
     }
+    // @include underline-animation-center(-2px, 2px, $link-color);
 }
 
 $article-info-color: #999;
@@ -169,14 +171,9 @@ $article-info-color: #999;
 }
 .article-info-container {
     color: $article-info-color;
-    // font-size: $base-font-size * 0.8;
-
     a {
         color: $article-info-color;
-        &:hover {
-            color: $link-color;
-            text-decoration: none;
-        }
+        @include underline-animation-center(-1px, 2px, $article-info-color);
     }
 }
 .post-info-icon {
@@ -198,7 +195,8 @@ $article-info-color: #999;
         text-decoration: none;
         color: #888;
         padding: 2px 10px;
-        transition: all 0.15s linear;
+        // transition: all 0.15s linear;
+        @include the-transition();
         &:hover {
             background-color: #e00;
             color: #fff;

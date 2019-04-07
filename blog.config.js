@@ -65,7 +65,7 @@ function getMyRenderer(app){
 }
 
 function indexToPageName(base){
-    return i => base + (i === 1 ? '/index.html' : `/page-${i}.html`);
+    return i => base + (i === 1 ? 'index.html' : `page-${i}.html`);
 }
 
 module.exports = async (app) => {
@@ -91,13 +91,13 @@ module.exports = async (app) => {
 
     // posts
     let postArg = {
-        tags: '/tags',
-        archive: '/archive',
-        category: '/category'
+        tags: '/tags/',
+        archive: '/archive/',
+        category: '/category/'
     };
     let postFiles = (await app.helper.readFiles('src/posts')).filter(f => f.endsWith('.md'));
     let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, {arg: postArg}));
-    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName(''), 5, {arg: postArg});
+    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName('/'), 5, {arg: postArg});
     let tags = new app.helper.Tags(
         postArg.tags,
         a => app.layouts.tag(a),
@@ -119,7 +119,7 @@ module.exports = async (app) => {
             mainPage.add(page).update();
         }
         page.article.tags.length > 0 && tags.update(page, page.article.tags);
-        page.article.category && category.update(page, page.article.category);
+        category.update(page, page.article.category);
     });
     let listener = page => pg.update(page);
     posts.forEach(p => p.on('update', listener));
