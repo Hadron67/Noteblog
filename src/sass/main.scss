@@ -22,9 +22,20 @@ $spacing-unit:     30px !default;
     padding-right: $outter-padding;
 }
 
+@mixin transform($p) {
+    transform: $p;
+    -webkit-transform: $p;
+}
+
+@mixin pressed {
+    &:hover, &:active {
+        @content;
+    }
+}
+
 @mixin underline-animation-center($bottom, $height, $color){
     position: relative;
-    &::before {
+    &::after {
         content: "";
         position: absolute;
         width: 0;
@@ -32,13 +43,13 @@ $spacing-unit:     30px !default;
         bottom: $bottom;
         left: 50%;
         background-color: $color;
-        // transition: all 0.2s ease-in-out;
-        @include the-transition();
+        visibility: hidden;
+        @include the-transition(all);
     }
-    &:hover::before {
-        width: 100%;
+    &:hover::after, &:active::after {
+        visibility: visible;
         left: 0;
-        right: auto;
+        width: 100%;
     }
 }
 
@@ -46,7 +57,8 @@ $spacing-unit:     30px !default;
     box-shadow: 0 1px 4px #aaa;
 }
 
-@mixin the-transition(){
+@mixin the-transition($prop){
+    transition-property: $prop;
     transition-duration: 0.2s;
     transition-timing-function: ease-in-out;
     transition-delay: 0s;
@@ -86,7 +98,7 @@ body {
 a {
     text-decoration: none;
     color: $link-color;
-    &:hover {
+    @include pressed() {
         color: $link-hover-color;
     }
 }
@@ -101,9 +113,11 @@ a {
     }
 }
 
-
-.post-entry {
-    padding-bottom: 40px;
+ul.main-post-list {
+    list-style: none;
+    > li {
+        padding-bottom: 40px;
+    }
 }
 
 @import "article.scss";

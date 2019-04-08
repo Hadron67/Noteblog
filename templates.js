@@ -5,7 +5,7 @@ module.exports = main => {
     let escapeS = main.helper.escapeS;
     let escapeHTML = main.helper.escapeHTML;
     let regulateName = main.helper.regulateName;
-    let monthNames = ['January', 'February', 'March', 'April', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
     function _forIn(obj, cb){
         let ret = [];
@@ -36,12 +36,21 @@ module.exports = main => {
                 escapeHTML(config.title),
             '</title>',
             '<link href="/css/main.css" type="text/css" rel="stylesheet">',
+            // XXX: Using an empty script tag to fix the Chrome bug that all property transition from 
+            // user agent to the supplied value on page load. See https://github.com/LeaVerou/prefixfree/issues/99
+            '<script> (function(){})(); </script>',
             metaTags,
             fontawesome(),
         '</head>'
     ];
+
+    let header = () => [
+        '<header class="main-header">',
+            
+        '</header>'
+    ];
     
-    let outter = content => [
+    let outter = (content, active) => [
         '<!DOCTYPE html>',
         '<html>',
             head(),
@@ -49,6 +58,7 @@ module.exports = main => {
                 '<div class="main-container">',
                     content,
                 '</div>',
+                '<script src="/static/js/main.js"></script>',
                 mathjax(),
             '</body>',
         '</html>'
@@ -122,20 +132,18 @@ module.exports = main => {
     };
     
     let postLike = (article, header, content, arg) => [
-        '<div class="article-outter-container">',
-            '<article>',
-                '<header class="article-title-container">',
-                    '<h1 class="article-title">', 
-                        header,                
-                    '</h1>',
-                    postInfo(article, arg),
-                '</header>',
-                '<div class="article-inner-container">',
-                    content,
-                '</div>',
-                postTags(article, arg),
-            '</article>',
-        '</div>',
+        '<article class="article-main">',
+            '<header class="article-title-container">',
+                '<h1 class="article-title">', 
+                    header,                
+                '</h1>',
+                postInfo(article, arg),
+            '</header>',
+            '<div class="article-inner-container">',
+                content,
+            '</div>',
+            postTags(article, arg),
+        '</article>',
     ];
     
     let post = ({article, arg}) => outter(postLike(article,
@@ -144,46 +152,70 @@ module.exports = main => {
         arg
     ));
     
-    let page = ({pages, arg}) => outter(pages.getPages().map(page => [
-        '<div class="post-entry">',
-            postLike(page.article,
-                `<a class="article-title-link" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
-                    page.article.summary,
-                    '<p class="article-more-btn">',
-                        `<a href="${escapeS(page.path)}">Read more</a>`,
-                    '</p>'
-                ],
-                arg
-            ),
-        '</div>'
-    ]));
+    let page = ({pages, arg}) => outter([
+        '<ul class="main-post-list">',
+        pages.getPages().map(page => [
+            '<li>',
+                postLike(page.article,
+                    `<a class="article-title-link" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
+                        page.article.summary,
+                        '<p class="article-more-btn">',
+                            `<a href="${escapeS(page.path)}">Read more</a>`,
+                        '</p>'
+                    ],
+                    arg
+                ),
+            '</li>'
+        ]),
+        '</ul>'
+    ]);
     
     function partitionByDate(pages){
         let ret = [];
         for (let p of pages){
             let top = ret[ret.length - 1];
-            let date = p.date;
-            if (top.date.getFullYear() === date.getFullYear() && top.date.getMonth() === date.getMonth()){
+            let date = p.article.date;
+            if (top && top.date.getFullYear() === date.getFullYear() && top.date.getMonth() === date.getMonth()){
                 top.pages.push(p);
             }
             else {
-                ret.push({date, page: p});
+                ret.push({date, pages: [p]});
             }
         }
         return ret;
     }
     
-    let postList = ({pages, arg}) => outter([
-        '<ul class="post-list">',
-            pages.getPages().map(page => [
+    let postList = ({pages, arg}) => outter(postDateList(pages.getPages(), arg));
+
+    let smallPost = (page, args) => [
+        '<article class="article-main">',
+            '<h1 class="article-title-small">', 
+                `<a class="article-title-link" href="${escapeS(page.path)}">`,
+                    escapeHTML(page.article.title),
+                '</a>',
+            '</h1>',
+        '</article>',
+    ];
+
+
+    let postDateList = (pages, args) => [
+        '<ul class="post-date-list">',
+            partitionByDate(pages).map(({date, pages}) => [
                 '<li>',
-                    `<a href="${page.path}">${page.article.title}</a>`,
+                    `<h2 class="post-list-date">${monthNames[date.getMonth()]}, ${escapeHTML(date.getFullYear().toString())}</h2>`,
+                    '<ul class="post-list">',
+                        pages.map(p => [
+                            '<li>',
+                                smallPost(p, args),
+                            '</li>'
+                        ]),
+                    '</ul>',
                 '</li>'
             ]),
         '</ul>'
-    ]);
+    ];
     
-    let category = ({node, pathBase, arg}) => outter([
+    let category = ({pages, node, pathBase, arg}) => outter([
         '<div class="category-outter-container">',
             '<header>',
                 `<a href="${escapeS(pathBase)}">Category</a>`,
@@ -203,7 +235,7 @@ module.exports = main => {
                             subcat.map(c => [
                                 `<li><a class="category-btn" href="${p}${regulateName(c)}/">`,
                                     '<span class="category-file-icon"><i class="fas fa-folder-open"></i></span>',
-                                    `${c}`,
+                                    escapeHTML(c),
                                 `</a></li>`
                             ]),
                         '</ul>'
@@ -212,6 +244,9 @@ module.exports = main => {
                 else 
                     return '';
             },
+            '<div class="category-post-list">',
+                postDateList(pages.getPages(), arg),
+            '</div>',
         '</div>',
     ]);
     

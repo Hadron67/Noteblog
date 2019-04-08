@@ -2,7 +2,7 @@
 layout: post
 title: Curvature 1-forms and tetrad method
 date: 2019-3-31 16:28:12 +0800
-category: Note/General relativity
+category: Note
 tags:
 - General relativity
 - Differential geometry

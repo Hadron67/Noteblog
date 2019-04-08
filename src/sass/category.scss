@@ -10,7 +10,7 @@ span.category-divider {
         background-color: #bbb;
         border-radius: 5px;
         padding: 5px 10px;
-        font-size: $base-font-size * 1.25;
+        // font-size: $base-font-size * 1.1;
         color: #777;
         a {
             color: #777;
@@ -39,7 +39,7 @@ ul.subcategory-container {
         background-color: #fff;
 
         // transition: all 0.15s linear;
-        @include the-transition();
+        @include the-transition(background-color);
         &:hover {
             background-color: #eee;
         }
@@ -47,4 +47,22 @@ ul.subcategory-container {
 }
 .category-file-icon {
     padding: 0 4px 0 0;
+}
+.post-list-date {
+    font-weight: $base-font-weight;
+    font-size: $base-font-size * 1.1;
+}
+ul.post-date-list {
+    list-style: none;
+    margin-top: 10px;
+}
+ul.post-list {
+    list-style-type: none;
+    > li {
+        padding: 10px 0;
+    }
+}
+h1.article-title-small {
+    font-size: $base-font-size * 1.25;
+    font-weight: $base-font-weight;
 }

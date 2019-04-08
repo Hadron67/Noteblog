@@ -82,6 +82,8 @@ module.exports = async (app) => {
 
     // Image files
     (await app.helper.readFiles('docs/static/img/2019')).forEach(f => app.static.register('/static/img/2019/' + f));
+    // Javascript
+    (await app.helper.readFiles('docs/static/js')).forEach(f => app.static.register('/static/js/' + f));
     
     app.scss.register('/css/main.css', [
         'src/sass/main.scss',
