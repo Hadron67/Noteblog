@@ -27,7 +27,7 @@ $inner-padding-small: 15px;
     blockquote {
         border-left: 5px solid #f6b73c;
         background-color: #fff3d4;
-        padding: 15px 0px 15px 15px;
+        padding: 15px 10px 15px 15px;
         font-style: italic;
         color: #777;
         > p:last-child {
@@ -67,21 +67,21 @@ $inner-padding-small: 15px;
     }
 
     h2 {
-        font-size: $base-font-size * 2;
+        font-size: $base-font-size * 1.625;
         // border-bottom: 4px solid #eee;
         // padding-bottom: 10px;
         // padding-top: 10px;
-        @media screen and (max-width: $font-media-max-width) {
-            font-size: $base-font-size * 1.625;
-        }
+        // @media screen and (max-width: $font-media-max-width) {
+        //     font-size: $base-font-size * 1.625;
+        // }
     }
     h3 {
-        font-size: $base-font-size * 1.625;
+        font-size: $base-font-size * 1.375;
         border-bottom: #aaa solid 1px;
         padding-bottom: 2px;
-        @media screen and (max-width: $font-media-max-width) {
-            font-size: $base-font-size * 1.327;
-        }
+        // @media screen and (max-width: $font-media-max-width) {
+        //     font-size: $base-font-size * 1.327;
+        // }
     }
     h4 {
         font-size: $base-font-size * 1.25;
@@ -95,9 +95,7 @@ $inner-padding-small: 15px;
     div.head2-wrapper {
         border-left: #44f solid 5px;
         color: #44f;
-        // background-color: lighten($color: #40f, $amount: 48%);
-        padding-top: 5px;
-        padding-bottom: 5px;
+        margin-bottom: 20px;
         clear: both;
         @include no-inner-padding();
     }

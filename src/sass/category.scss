@@ -6,7 +6,7 @@ span.category-divider {
     vertical-align: .125em;// XXX: A result of tweaking
 }
 .category-outter-container {
-    header {
+    header.category-path {
         background-color: #bbb;
         border-radius: 5px;
         padding: 5px 10px;
@@ -34,23 +34,30 @@ ul.subcategory-container {
         color: $base-font-color;
         display: inline-block;
         padding: 5px 10px;
-        border-left: #bb0 solid 3px;
-        @include shadow-base();
-        background-color: #fff;
-
-        // transition: all 0.15s linear;
-        @include the-transition(background-color);
-        &:hover {
-            background-color: #eee;
-        }
     }
 }
+
+.btn-category {
+    border-left: #bb0 solid 3px;
+    @include shadow-base();
+    background-color: #fff;
+
+    // transition: all 0.15s linear;
+    @include the-transition(background-color);
+    &:hover {
+        background-color: #eee;
+    }
+}
+
 .category-file-icon {
     padding: 0 4px 0 0;
 }
 .post-list-date {
     font-weight: $base-font-weight;
     font-size: $base-font-size * 1.1;
+}
+.category-post-list {
+    margin-top: 20px;
 }
 ul.post-date-list {
     list-style: none;

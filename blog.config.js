@@ -88,7 +88,8 @@ module.exports = async (app) => {
     app.scss.register('/css/main.css', [
         'src/sass/main.scss',
         'src/sass/article.scss',
-        'src/sass/category.scss'
+        'src/sass/category.scss',
+        'src/sass/header.scss'
     ]);
 
     // posts

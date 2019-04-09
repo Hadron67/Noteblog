@@ -1,0 +1,114 @@
+$collapse-min-width: 700px;
+$header-font-color: #555;
+
+@mixin mobile {
+    @media screen and (max-width: $collapse-min-width){
+        @content;
+    }
+}
+
+@mixin nav-btn-padding {
+    padding: 15px 20px;
+}
+
+.main-header {
+    color: $header-font-color;
+}
+.site-nav {
+    position: relative;
+}
+ul.nav-list {
+    list-style: none;
+    display: inline-block;
+    position: relative;
+    > li {
+        display: inline-block;
+        @include nav-btn-padding();
+    }
+    &.collapse {
+        @include mobile(){
+            z-index: 10;
+            position: fixed;
+            height: 100%;
+            display: block;
+            overflow: hidden;
+            background-color: #fff;
+            border-bottom-right-radius: 2px;
+            transform-origin: left;
+            -webkit-transform-origin: left;
+            width: 200px;
+            top: 0;
+            left: -210px;
+            @include the-transition(all);
+            @include shadow-base();
+        }
+        > li {
+            @include mobile() {
+                display: block;
+                padding: 0;
+            }
+            &.collapse {
+                display: none;
+                @include mobile() {
+                    display: block;
+                }
+            }
+        }
+        &.show {
+            left: 0;
+        }
+    }
+    &.right {
+        float: right;
+    }
+}
+.nav-btn {
+    display: inline-block;
+    color: $header-font-color;
+    @include the-transition(all);
+    &.collapse {
+        @include mobile() {
+            display: block;
+            @include nav-btn-padding();
+        }
+    }
+}
+.nav-icon {
+    padding-right: 5px;
+    display: none;
+    @include mobile() {
+        float: none;
+        display: inline;
+    }
+}
+#btn-close-menu {
+    @include nav-btn-padding();
+    display: none;
+    @include mobile(){
+        display: inline-block;
+    }
+}
+
+#btn-collapse {
+    // float: right;
+    display: none;
+    padding: 15px 20px;
+    @include mobile() {
+        display: inline-block;
+    }
+}
+.banner {
+    padding: 30px 0;
+    color: #777;
+    h1 {
+        font-size: $base-font-size * 1.8;
+        font-weight: $base-font-weight;
+        text-align: center;
+        padding: 5px;
+    }
+    h2 {
+        font-weight: $base-font-weight;
+        text-align: center;
+        font-size: $base-font-size * 1.5;
+    }
+}

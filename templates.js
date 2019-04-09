@@ -44,19 +44,73 @@ module.exports = main => {
         '</head>'
     ];
 
-    let header = () => [
-        '<header class="main-header">',
-            
+    let header = (banner, active = '') => [
+        '<header class="main-header clearfix">',
+            '<nav class="site-nav clearfix">',
+                '<a href="javascript:;" id="btn-collapse" class="nav-btn">',
+                    '<i class="fas fa-bars"></i>',
+                '</a>',
+                '<ul class="nav-list right">',
+                    [
+                        {icon: '<i class="fas fa-search"></i>', path: 'javascript:;', id: 'btn-search'},
+                        {icon: '<i class="fas fa-rss"></i>', path: '/rss.xml', id: null},
+                    ].map(({icon, path, id}) => [
+                        '<li>',
+                            `<a href="${escapeS(path)}" class="nav-btn"${id ? ' ' + id : ''}>`,
+                                '<span class="nav-icon-btn">',
+                                    icon,
+                                '</span>',
+                            '</a>',
+                        '</li>'
+                    ]),
+                '</ul>',
+                '<ul class="nav-list collapse" id="main-nav-list">',
+                    '<li class="collapse">',
+                        '<a class="nav-btn" id="btn-close-menu" href="javascript:;"><i class="fas fa-arrow-left"></i></a>',
+                    '</li>',
+                    [
+                        {name: 'Home', icon: '<i class="fas fa-home"></i>', path: '/'},
+                        {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: '/archive/'},
+                        {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: '/category/'},
+                        {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: '/tags/'},
+                        {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes'},
+                        {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
+                    ].map(({name, icon, path}) => [
+                        `<li${active === name ? " nav-active-item" : ''}>`,
+                            `<a href="${escapeS(path)}" class="nav-btn collapse">`,
+                                '<span class="nav-icon">',
+                                    icon,
+                                '</span>',
+                                `<span class="nav-item-name">${escapeHTML(name)}</span>`,
+                            '</a>',
+                        '</li>'
+                    ]),
+                '</ul>',
+            '</nav>',
+            _if(banner, () => [
+                '<div class="banner">',
+                    banner,
+                '</div>',
+            ]),
         '</header>'
     ];
+
+    let footer = () => [
+        '<footer class="main-footer">',
+            
+        '/<footer>'
+    ];
     
-    let outter = (content, active) => [
+    let outter = (banner, content, active) => [
         '<!DOCTYPE html>',
         '<html>',
             head(),
             '<body>',
-                '<div class="main-container">',
-                    content,
+                header(banner, active),
+                '<div class="outter-container">',
+                    '<div class="main-container">',
+                        content,
+                    '</div>',
                 '</div>',
                 '<script src="/static/js/main.js"></script>',
                 mathjax(),
@@ -146,13 +200,19 @@ module.exports = main => {
         '</article>',
     ];
     
-    let post = ({article, arg}) => outter(postLike(article,
+    let post = ({article, arg}) => outter([
+        "<h1>Welcome to</h1>",
+        "<h1>Hadroncfy's Notebook</h1>",
+    ], postLike(article,
         escapeHTML(article.title),
         article.content,
         arg
     ));
     
     let page = ({pages, arg}) => outter([
+        "<h1>Welcome to</h1>",
+        "<h1>Hadroncfy's Notebook</h1>",
+    ], [
         '<ul class="main-post-list">',
         pages.getPages().map(page => [
             '<li>',
@@ -185,15 +245,20 @@ module.exports = main => {
         return ret;
     }
     
-    let postList = ({pages, arg}) => outter(postDateList(pages.getPages(), arg));
+    let tag = ({pages, arg, tag}) => outter([
+        `<h1>Tag: </h1>`,
+        `<h2>${escapeHTML(tag)}</h2>`
+    ], postDateList(pages.getPages(), arg));
 
     let smallPost = (page, args) => [
-        '<article class="article-main">',
-            '<h1 class="article-title-small">', 
-                `<a class="article-title-link" href="${escapeS(page.path)}">`,
-                    escapeHTML(page.article.title),
-                '</a>',
-            '</h1>',
+        '<article class="article-main article-small">',
+            '<header class="article-title-container">',
+                '<h1 class="article-title-small">', 
+                    `<a class="article-title-link" href="${escapeS(page.path)}">`,
+                        escapeHTML(page.article.title),
+                    '</a>',
+                '</h1>',
+            '</header>',
         '</article>',
     ];
 
@@ -216,8 +281,10 @@ module.exports = main => {
     ];
     
     let category = ({pages, node, pathBase, arg}) => outter([
+        "<h1>Categories</h1>",
+    ], [
         '<div class="category-outter-container">',
-            '<header>',
+            '<header class="category-path">',
                 `<a href="${escapeS(pathBase)}">Category</a>`,
                 node.getPath().map(n => [
                     '<span class="category-divider">',
@@ -233,7 +300,7 @@ module.exports = main => {
                     return [
                         '<ul class="subcategory-container">',
                             subcat.map(c => [
-                                `<li><a class="category-btn" href="${p}${regulateName(c)}/">`,
+                                `<li><a class="category-btn btn-category" href="${p}${regulateName(c)}/">`,
                                     '<span class="category-file-icon"><i class="fas fa-folder-open"></i></span>',
                                     escapeHTML(c),
                                 `</a></li>`
@@ -252,6 +319,6 @@ module.exports = main => {
     
     main.layouts.post = post;
     main.layouts.page = page;
-    main.layouts.tag = postList;
+    main.layouts.tag = tag;
     main.layouts.category = category;
 };
