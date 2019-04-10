@@ -89,7 +89,8 @@ module.exports = async (app) => {
         'src/sass/main.scss',
         'src/sass/article.scss',
         'src/sass/category.scss',
-        'src/sass/header.scss'
+        'src/sass/header.scss',
+        'src/sass/search.scss'
     ]);
 
     // posts
@@ -101,6 +102,7 @@ module.exports = async (app) => {
     let postFiles = (await app.helper.readFiles('src/posts')).filter(f => f.endsWith('.md'));
     let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, {arg: postArg}));
     let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName('/'), 5, {arg: postArg});
+    let archive = new app.helper.Paginator(compareDate, a => app.layouts.archive(a), indexToPageName('/archive/'), 20, {arg: postArg});
     let tags = new app.helper.Tags(
         postArg.tags,
         a => app.layouts.tag(a),
@@ -120,6 +122,7 @@ module.exports = async (app) => {
     let pg = new app.helper.PageGroup((page, n) => {
         if (n){
             mainPage.add(page).update();
+            archive.add(page).update();
         }
         page.article.tags.length > 0 && tags.update(page, page.article.tags);
         category.update(page, page.article.category);

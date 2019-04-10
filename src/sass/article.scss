@@ -93,8 +93,8 @@ $inner-padding-small: 15px;
         font-size: $base-font-size * 1.1;
     }
     div.head2-wrapper {
-        border-left: #44f solid 5px;
-        color: #44f;
+        border-left: $top-border-color solid 5px;
+        color: $top-border-color;
         margin-bottom: 20px;
         clear: both;
         @include no-inner-padding();

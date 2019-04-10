@@ -1,5 +1,8 @@
-$collapse-min-width: 700px;
-$header-font-color: #555;
+$collapse-min-width: 800px; // For testing ipad
+$header-font-color: #eee;
+$active-btn-border-len: 4px;
+
+$header-height: 220px;
 
 @mixin mobile {
     @media screen and (max-width: $collapse-min-width){
@@ -7,15 +10,33 @@ $header-font-color: #555;
     }
 }
 
+$nav-btn-top-padding: 15px;
+$nav-btn-left-padding: 20px;
 @mixin nav-btn-padding {
-    padding: 15px 20px;
+    padding: $nav-btn-top-padding $nav-btn-left-padding;
 }
 
 .main-header {
     color: $header-font-color;
+    background-color: #777;
+    position: relative;
+    height: $header-height;
 }
 .site-nav {
-    position: relative;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-shadow: 0 2px 2px #999;
+    background-color: #777;
+    &.fixed {
+        position: fixed;
+        top: 0;
+        bottom: auto;
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
 }
 ul.nav-list {
     list-style: none;
@@ -23,11 +44,16 @@ ul.nav-list {
     position: relative;
     > li {
         display: inline-block;
-        @include nav-btn-padding();
+        padding: 0 8px;
+        &.active {
+            > .nav-btn {
+                border-bottom: $header-font-color solid 2px;
+            }
+        }
     }
     &.collapse {
         @include mobile(){
-            z-index: 10;
+            z-index: 20;
             position: fixed;
             height: 100%;
             display: block;
@@ -46,6 +72,14 @@ ul.nav-list {
             @include mobile() {
                 display: block;
                 padding: 0;
+                border-left: transparent solid 4px;
+                &.active {
+                    border-left: #77e solid 4px;
+                    background-color: #ddd;
+                    > .nav-btn {
+                        border-bottom: 0;
+                    }
+                }
             }
             &.collapse {
                 display: none;
@@ -62,14 +96,33 @@ ul.nav-list {
         float: right;
     }
 }
+$nav-btn-ext-padding: 10px;
 .nav-btn {
     display: inline-block;
     color: $header-font-color;
     @include the-transition(all);
+    padding: $nav-btn-top-padding 8px;
+    border-bottom: transparent solid 2px;
     &.collapse {
         @include mobile() {
+            color: #555;
             display: block;
+            margin: 0;
+            border: 0;
             @include nav-btn-padding();
+            &.active {
+                border: 0;
+                background-color: #ddd;
+            }
+        }
+    }
+    &:hover {
+        color: $header-font-color;
+        border-bottom: #aaa solid 2px;
+    }
+    @include mobile() {
+        &:hover {
+            border: 0;
         }
     }
 }
@@ -82,8 +135,10 @@ ul.nav-list {
     }
 }
 #btn-close-menu {
+    color: #555;
     @include nav-btn-padding();
     display: none;
+    border: 0;
     @include mobile(){
         display: inline-block;
     }
@@ -99,7 +154,7 @@ ul.nav-list {
 }
 .banner {
     padding: 30px 0;
-    color: #777;
+    color: $header-font-color;
     h1 {
         font-size: $base-font-size * 1.8;
         font-weight: $base-font-weight;

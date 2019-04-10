@@ -67,7 +67,7 @@ $spacing-unit:     30px !default;
 $link-color: #e32d40 !default;
 $link-hover-color: #00e;
 
-$top-border-color: #55f;
+$top-border-color: #77f;
 
 * {
     @include box-sizing-b(border-box);
@@ -78,11 +78,11 @@ dl, dd, ol, ul, figure {
   margin: 0;
   padding: 0;
 }
-
+$body-background: #ddd;
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', "Microsoft Yahei", sans-serif;
     color: $base-font-color;
-    background-color: #ddd;
+    background-color: $body-background;
     font-size: $base-font-size;
 }
 
@@ -104,8 +104,10 @@ a {
 .outter-container {
 
 }
+
+$main-container-max-width: 1100px;
 .main-container {
-    max-width: 1100px;
+    max-width: $main-container-max-width;
     margin: 0 auto;
     padding: 20px 10px;
 }
@@ -121,6 +123,24 @@ ul.main-post-list {
     }
 }
 
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    @include the-transition(all);
+    z-index: 5;
+    visibility: hidden;
+    background-color: #000;
+    &.show {
+        visibility: visible;
+        opacity: 0.5;
+    }
+}
+
+@import "header.scss";
+@import "search.scss";
 @import "article.scss";
 @import "category.scss";
-@import "header.scss";

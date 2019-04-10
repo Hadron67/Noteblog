@@ -46,7 +46,12 @@ module.exports = main => {
 
     let header = (banner, active = '') => [
         '<header class="main-header clearfix">',
-            '<nav class="site-nav clearfix">',
+            _if(banner, () => [
+                '<div class="banner">',
+                    banner,
+                '</div>',
+            ]),
+            '<nav class="site-nav clearfix" id="main-nav">',
                 '<a href="javascript:;" id="btn-collapse" class="nav-btn">',
                     '<i class="fas fa-bars"></i>',
                 '</a>',
@@ -56,7 +61,7 @@ module.exports = main => {
                         {icon: '<i class="fas fa-rss"></i>', path: '/rss.xml', id: null},
                     ].map(({icon, path, id}) => [
                         '<li>',
-                            `<a href="${escapeS(path)}" class="nav-btn"${id ? ' ' + id : ''}>`,
+                            `<a href="${escapeS(path)}" class="nav-btn"${id ? ` id="${id}"` : ''}>`,
                                 '<span class="nav-icon-btn">',
                                     icon,
                                 '</span>',
@@ -76,7 +81,7 @@ module.exports = main => {
                         {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes'},
                         {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
                     ].map(({name, icon, path}) => [
-                        `<li${active === name ? " nav-active-item" : ''}>`,
+                        `<li${active === name ? ' class="active"' : ''}>`,
                             `<a href="${escapeS(path)}" class="nav-btn collapse">`,
                                 '<span class="nav-icon">',
                                     icon,
@@ -87,11 +92,6 @@ module.exports = main => {
                     ]),
                 '</ul>',
             '</nav>',
-            _if(banner, () => [
-                '<div class="banner">',
-                    banner,
-                '</div>',
-            ]),
         '</header>'
     ];
 
@@ -100,8 +100,22 @@ module.exports = main => {
             
         '/<footer>'
     ];
+
+    let searchPanel = [
+        '<div id="search-panel">',
+            '<div class="search-inner">',
+                '<div class="search-input-container">',
+                    '<a id="btn-clear-search"><i class="fas fa-times"></i></a>',
+                    '<input id="search-input" type="text" autocomplete="off" placeholder="Search what you want to read..." />',
+                '</div>',
+                '<ul id="search-result">',
+                    '<li>Warning: Searching is not implemented yet</li>',
+                '</ul>',
+            '</div>',
+        '</div>',
+    ];
     
-    let outter = (banner, content, active) => [
+    let outter = (banner, active, content) => [
         '<!DOCTYPE html>',
         '<html>',
             head(),
@@ -112,6 +126,8 @@ module.exports = main => {
                         content,
                     '</div>',
                 '</div>',
+                '<div id="overlay"></div>',
+                searchPanel,
                 '<script src="/static/js/main.js"></script>',
                 mathjax(),
             '</body>',
@@ -203,7 +219,7 @@ module.exports = main => {
     let post = ({article, arg}) => outter([
         "<h1>Welcome to</h1>",
         "<h1>Hadroncfy's Notebook</h1>",
-    ], postLike(article,
+    ], '', postLike(article,
         escapeHTML(article.title),
         article.content,
         arg
@@ -212,7 +228,7 @@ module.exports = main => {
     let page = ({pages, arg}) => outter([
         "<h1>Welcome to</h1>",
         "<h1>Hadroncfy's Notebook</h1>",
-    ], [
+    ], 'Home', [
         '<ul class="main-post-list">',
         pages.getPages().map(page => [
             '<li>',
@@ -248,7 +264,7 @@ module.exports = main => {
     let tag = ({pages, arg, tag}) => outter([
         `<h1>Tag: </h1>`,
         `<h2>${escapeHTML(tag)}</h2>`
-    ], postDateList(pages.getPages(), arg));
+    ], 'Tags', postDateList(pages.getPages(), arg));
 
     let smallPost = (page, args) => [
         '<article class="article-main article-small">',
@@ -282,7 +298,7 @@ module.exports = main => {
     
     let category = ({pages, node, pathBase, arg}) => outter([
         "<h1>Categories</h1>",
-    ], [
+    ], 'Categories', [
         '<div class="category-outter-container">',
             '<header class="category-path">',
                 `<a href="${escapeS(pathBase)}">Category</a>`,
@@ -316,9 +332,18 @@ module.exports = main => {
             '</div>',
         '</div>',
     ]);
-    
+
+    let archive = ({pages, arg}) => outter([
+        '<h1>Archive</h1>'
+    ], 'Archive', [
+        '<div class="archive-container">',
+            postDateList(pages.getPages(), arg),
+        '</div>'
+    ]);
+
     main.layouts.post = post;
     main.layouts.page = page;
     main.layouts.tag = tag;
     main.layouts.category = category;
+    main.layouts.archive = archive;
 };
