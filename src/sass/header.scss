@@ -16,9 +16,11 @@ $nav-btn-left-padding: 20px;
     padding: $nav-btn-top-padding $nav-btn-left-padding;
 }
 
+$nav-background: $plastic-green;
+
 .main-header {
     color: $header-font-color;
-    background-color: #777;
+    background-color: $nav-background;
     position: relative;
     height: $header-height;
 }
@@ -27,15 +29,15 @@ $nav-btn-left-padding: 20px;
     bottom: 0;
     left: 0;
     width: 100%;
-    box-shadow: 0 2px 2px #999;
-    background-color: #777;
+    box-shadow: 0 2px 2px #aaa;
+    background-color: $nav-background;
     &.fixed {
         position: fixed;
         top: 0;
         bottom: auto;
         left: 0;
         width: 100%;
-        z-index: 10;
+        z-index: $z-idx-title-bar;
     }
 }
 ul.nav-list {
@@ -53,7 +55,7 @@ ul.nav-list {
     }
     &.collapse {
         @include mobile(){
-            z-index: 20;
+            z-index: 2;
             position: fixed;
             height: 100%;
             display: block;
@@ -116,12 +118,12 @@ $nav-btn-ext-padding: 10px;
             }
         }
     }
-    &:hover {
+    @include pressed() {
         color: $header-font-color;
-        border-bottom: #aaa solid 2px;
+        border-bottom: #ccc solid 2px;
     }
     @include mobile() {
-        &:hover {
+        @include pressed() {
             border: 0;
         }
     }
@@ -165,5 +167,21 @@ $nav-btn-ext-padding: 10px;
         font-weight: $base-font-weight;
         text-align: center;
         font-size: $base-font-size * 1.5;
+    }
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    @include the-transition(all);
+    visibility: hidden;
+    background-color: #000;
+    z-index: 1;
+    &.show {
+        visibility: visible;
+        opacity: 0.5;
     }
 }

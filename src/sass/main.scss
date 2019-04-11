@@ -25,6 +25,7 @@ $spacing-unit:     30px !default;
 @mixin transform($p) {
     transform: $p;
     -webkit-transform: $p;
+    -ms-transform: $p;
 }
 
 @mixin pressed {
@@ -57,9 +58,9 @@ $spacing-unit:     30px !default;
     box-shadow: 0 1px 4px #aaa;
 }
 
-@mixin the-transition($prop){
+@mixin the-transition($prop, $delay: 0.2s){
     transition-property: $prop;
-    transition-duration: 0.2s;
+    transition-duration: $delay;
     transition-timing-function: ease-in-out;
     transition-delay: 0s;
 }
@@ -84,14 +85,20 @@ body {
     color: $base-font-color;
     background-color: $body-background;
     font-size: $base-font-size;
+    position: relative;
 }
 
-.clearfix::before, .clearfix::after{
+
+
+%clearfix::before, %clearfix::after{
     content: "";
     display: table;
     clear: both;
 }
 
+.clearfix {
+    @extend %clearfix;
+}
 
 a {
     text-decoration: none;
@@ -110,6 +117,7 @@ $main-container-max-width: 1100px;
     max-width: $main-container-max-width;
     margin: 0 auto;
     padding: 20px 10px;
+    min-height: 100vh;
 }
 
 .shadow-base {
@@ -123,24 +131,36 @@ ul.main-post-list {
     }
 }
 
-#overlay {
+#totop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    @include the-transition(all);
-    z-index: 5;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 50%;
+    color: #fff;
+    z-index: 1;
+    background-color: $top-border-color;
+    // @include shadow-base();
+    box-shadow: 0 0 4px rgba(85, 85, 85, 0.164);
     visibility: hidden;
-    background-color: #000;
+    bottom: 40px;
+    right: -51px;
+    @include the-transition(all, 0.5s);
+    @include transform(rotateZ(3.61rad));
     &.show {
         visibility: visible;
-        opacity: 0.5;
+        right: 40px;
+        @include transform(rotateZ(0deg));
     }
 }
+
+$z-idx-title-bar: 12;
+$z-idx-search-panel: 13;
 
 @import "header.scss";
 @import "search.scss";
 @import "article.scss";
 @import "category.scss";
+@import "footer.scss";
+@import "tags.scss";

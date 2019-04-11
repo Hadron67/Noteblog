@@ -1,3 +1,8 @@
+@mixin mobile-post-list {
+    @media screen and (max-width: 800px) {
+        @content;
+    }
+}
 span.category-divider {
     font-size: $base-font-size * 0.6;
     padding-right: 5px;
@@ -54,7 +59,8 @@ ul.subcategory-container {
 }
 .post-list-date {
     font-weight: $base-font-weight;
-    font-size: $base-font-size * 1.1;
+    font-size: $base-font-size * 1.25;
+    margin-bottom: 10px;
 }
 .category-post-list {
     margin-top: 20px;
@@ -64,9 +70,19 @@ ul.post-date-list {
     margin-top: 10px;
 }
 ul.post-list {
+    @extend %clearfix;
     list-style-type: none;
+    padding-bottom: 20px;
     > li {
+        float: left;
         padding: 10px 0;
+        width: 50%;
+        padding: 10px;
+        @include mobile-post-list(){
+            float: none;
+            width: 100%;
+            display: block;
+        }
     }
 }
 h1.article-title-small {

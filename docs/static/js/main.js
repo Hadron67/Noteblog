@@ -14,19 +14,32 @@
     var collapseBtn = A.getElementById('btn-collapse');
     var collapseList = A.getElementById('main-nav-list');
     var btnCloseMenu = A.getElementById('btn-close-menu');
-    var overlay = A.getElementById('overlay');
+    var overlays = A.getElementsByClassName('overlay');
     var btnSearch = A.getElementById('btn-search');
+    var totop = A.getElementById('totop');
 
     var search = A.getElementById('search-panel');
 
+    function showOverlay(){
+        for (var i = 0, _a = overlays; i < _a.length; i++){
+            _a[i].classList.add('show');
+        }
+    }
+
+    function hideOverlay(){
+        for (var i = 0, _a = overlays; i < _a.length; i++){
+            _a[i].classList.remove('show');
+        }
+    }
+
     function showMenu(){
         collapseList.classList.add('show');
-        overlay.classList.add('show');
+        showOverlay();
     }
 
     function hideMenu(){
         collapseList.classList.remove('show');
-        overlay.classList.remove('show');
+        hideOverlay();
     }
 
     function isMenuShowing(){
@@ -53,26 +66,27 @@
         hideMenu();
     });
 
-    overlay.addEventListener('click', function(){
-        if (isMenuShowing()){
-            hideMenu();
-        }
-        if (isSearchShowing()){
-            overlay.classList.remove('show');
-            search.classList.remove('show');
-        }
-    });
+    for (var i = 0, _a = overlays; i < _a.length; i++){
+        _a[i].addEventListener('click', function(){
+            if (isMenuShowing()){
+                hideMenu();
+            }
+            if (isSearchShowing()){
+                hideOverlay();
+                search.classList.remove('show');
+            }
+        });
+    }
 
     btnSearch.addEventListener('click', function(){
         search.classList.add('show');
-        overlay.classList.add('show');
+        showOverlay();
     });
 
     var nav = A.getElementById('main-nav');
     var navPos = getPos(nav);
 
-    function fixHeading(){
-        var pos = A.documentElement.scrollTop || A.body.scrollTop;
+    function fixHeading(pos){
         if (pos > navPos){
             nav.classList.add('fixed');
         }
@@ -82,10 +96,35 @@
         }
     }
 
+    function scrollToTop(pos){
+        var div = 10, i = 0;
+        var dh = pos / div;
+        var interval = setInterval(function(){
+            if (i >= div){
+                clearInterval(interval);
+            }
+            window.scrollTo(0, Math.ceil(pos - dh * i++) | 0);
+        }, 20);
+    }
+
     A.addEventListener('scroll', function(e){
-        fixHeading();
+        var pos = A.documentElement.scrollTop || A.body.scrollTop;
+        fixHeading(pos);
+        // Schmitt trigger
+        if (pos > 200 && !totop.classList.contains('show')){
+            totop.classList.add('show');
+        }
+        if (pos < 150 && totop.classList.contains('show')){
+            totop.classList.remove('show');
+        }
     });
     A.addEventListener('load', function(){
         fixHeading();
     });
+    totop.addEventListener('click', function(){
+        var pos = A.documentElement.scrollTop || A.body.scrollTop;
+        scrollToTop(pos);
+    });
+
+    fixHeading();
 })(document, window);

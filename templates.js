@@ -91,14 +91,56 @@ module.exports = main => {
                         '</li>'
                     ]),
                 '</ul>',
+                '<div class="overlay"></div>',
             '</nav>',
         '</header>'
     ];
 
-    let footer = () => [
+    let creativeCommon = [
+        // '<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">',
+        //     '<img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />',
+        // '</a>',
+        // '<br />',
+        'This work is licensed under a ',
+        '<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">',
+            'Creative Commons Attribution 4.0 International License',
+        '</a>.'
+    ];
+
+    let footer = (path) => [
         '<footer class="main-footer">',
-            
-        '/<footer>'
+            '<div class="footer-row-2">',
+                '<div class="footer-right">',
+                    '<span>Links</span>',
+                    '<ul class="link-list">',
+                        [
+                            {name: 'zzy(BG6GCZ)', url: 'https://zzy.blog.ustc.edu.cn/'},
+                            {name: 'wxy', url: 'https://wxyhly.github.io/'},
+                            {name: 'futantan', url: 'https://www.futantan.com/'}
+                        ].map(({name, url}) => [
+                            '<li>',
+                                `<a href="${url}">${name}</a>`,
+                            '</li>'
+                        ]),
+                    '</ul>',
+                '</div>',
+                '<div class="divider"></div>',
+                '<div class="footer-left">',
+                    '<p>',
+                        creativeCommon,
+                    '</p>',
+                    '<p>',
+                        'Powered by <a href="https://github.com/Hadron67/blog">Blogger</a>, theme written by Hadroncfy.',
+                    '</p>',
+                    '<p>',
+                        '<i class="fab fa-html5"></i> ',
+                        `<a href="http://validator.w3.org/check?uri=http://${config.domain}${path}" target="_blank">`,
+                            'Validate HTML5',
+                        '</a>',
+                    '</p>',
+                '</div>',
+            '</div>',
+        '</footer>'
     ];
 
     let searchPanel = [
@@ -115,7 +157,7 @@ module.exports = main => {
         '</div>',
     ];
     
-    let outter = (banner, active, content) => [
+    let outter = (banner, active, path, content) => [
         '<!DOCTYPE html>',
         '<html>',
             head(),
@@ -126,8 +168,9 @@ module.exports = main => {
                         content,
                     '</div>',
                 '</div>',
-                '<div id="overlay"></div>',
+                footer(path),
                 searchPanel,
+                '<a id="totop" href="javascript:;" title="Back to top"><i class="fas fa-chevron-up"></i></a>',
                 '<script src="/static/js/main.js"></script>',
                 mathjax(),
             '</body>',
@@ -186,14 +229,14 @@ module.exports = main => {
         ];
     };
     
-    let postTags = (article, arg) => {
+    let postTags = (article, arg, small = false) => {
         if (article.tags.length === 0){
             return '';
         }
         return [
-            '<footer class="post-footer">',
+            `<footer class="post-footer${small ? ' small' : ''}">`,
                 article.tags.map(tag => [
-                    `<a href="${escapeS(arg.tags)}${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
+                    `<a class="btn-tag" href="${escapeS(arg.tags)}${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
                         `<i class="fas fa-tag"></i>${escapeHTML(tag)}`,
                     '</a>',
                 ]),
@@ -216,19 +259,19 @@ module.exports = main => {
         '</article>',
     ];
     
-    let post = ({article, arg}) => outter([
+    let post = ({article, arg, path}) => outter([
         "<h1>Welcome to</h1>",
         "<h1>Hadroncfy's Notebook</h1>",
-    ], '', postLike(article,
+    ], '', path, postLike(article,
         escapeHTML(article.title),
         article.content,
         arg
     ));
     
-    let page = ({pages, arg}) => outter([
+    let page = ({pages, path, arg}) => outter([
         "<h1>Welcome to</h1>",
         "<h1>Hadroncfy's Notebook</h1>",
-    ], 'Home', [
+    ], 'Home', path, [
         '<ul class="main-post-list">',
         pages.getPages().map(page => [
             '<li>',
@@ -261,20 +304,22 @@ module.exports = main => {
         return ret;
     }
     
-    let tag = ({pages, arg, tag}) => outter([
+    let tag = ({pages, arg, tag, path}) => outter([
         `<h1>Tag: </h1>`,
         `<h2>${escapeHTML(tag)}</h2>`
-    ], 'Tags', postDateList(pages.getPages(), arg));
+    ], '', path, postDateList(pages.getPages(), arg));
 
     let smallPost = (page, args) => [
-        '<article class="article-main article-small">',
-            '<header class="article-title-container">',
-                '<h1 class="article-title-small">', 
+        '<article class="article-main">',
+            '<header class="article-title-container small">',
+                '<h1 class="article-title small">', 
                     `<a class="article-title-link" href="${escapeS(page.path)}">`,
                         escapeHTML(page.article.title),
                     '</a>',
                 '</h1>',
+                postInfo(page.article, args),
             '</header>',
+            postTags(page.article, args, true),
         '</article>',
     ];
 
@@ -296,9 +341,9 @@ module.exports = main => {
         '</ul>'
     ];
     
-    let category = ({pages, node, pathBase, arg}) => outter([
+    let category = ({pages, node, pathBase, path, arg}) => outter([
         "<h1>Categories</h1>",
-    ], 'Categories', [
+    ], 'Categories', path, [
         '<div class="category-outter-container">',
             '<header class="category-path">',
                 `<a href="${escapeS(pathBase)}">Category</a>`,
@@ -333,12 +378,44 @@ module.exports = main => {
         '</div>',
     ]);
 
-    let archive = ({pages, arg}) => outter([
+    let archive = ({pages, path, arg}) => outter([
         '<h1>Archive</h1>'
-    ], 'Archive', [
+    ], 'Archive', path, [
         '<div class="archive-container">',
             postDateList(pages.getPages(), arg),
         '</div>'
+    ]);
+
+    function totalTags(tags){
+        let ret = 0;
+        for (let name in tags){
+            ret += tags[name].size();
+        }
+        return ret;
+    }
+
+    function getTagStyle(len, total){
+        let from = 1, to = 3;
+        let fs = from + (to - from) * len / total;
+        return `font-size: ${fs}em;`;
+    }
+
+    let tagCloud = ({tags, path, arg}) => outter([
+        '<h1>Tag Cloud</h1>'
+    ], 'Tags', path, [
+        '<ul class="tag-cloud">',
+            () => {
+                let total = totalTags(tags);
+                return _forIn(tags, (k, v) => [
+                    '<li>',
+                        `<a href="${escapeS(arg.tags)}${escapeS(regulateName(k))}/" style="${getTagStyle(v.size(), total)}">`,
+                            '<i class="fas fa-tag"></i>',
+                            escapeHTML(k),
+                        '</a>',
+                    '</li>'
+                ])
+            },
+        '</ul>'
     ]);
 
     main.layouts.post = post;
@@ -346,4 +423,5 @@ module.exports = main => {
     main.layouts.tag = tag;
     main.layouts.category = category;
     main.layouts.archive = archive;
+    main.layouts.tagCloud = tagCloud;
 };

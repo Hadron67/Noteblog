@@ -12,7 +12,7 @@ $search-panel-bradius: 8px;
     visibility: hidden;
     width: 100%;
     @include the-transition(all);
-    z-index: 12;
+    z-index: $z-idx-search-panel;
     &.show {
         top: 100px;
         visibility: visible;

@@ -3,6 +3,8 @@ $inner-container-media-max-width: 500px;
 $inner-padding-large: 30px;
 $inner-padding-small: 15px;
 
+$article-small-inner-padding: 20px;
+
 @mixin no-inner-padding {
     @include wrapper-cancel-padding($inner-padding-large);
     @media screen and (max-width: $inner-container-media-max-width) {
@@ -119,25 +121,41 @@ $tag-btn-padding: 12px;
 
 .post-footer {
     border-top: #eee solid 1px;
-    padding: $tag-btn-padding / 2 20px $tag-btn-padding / 2 20px;
+    // padding: $tag-btn-padding / 2 20px $tag-btn-padding / 2 20px;
+    padding-top: $tag-btn-padding / 2;
+    padding-bottom: $tag-btn-padding / 2;
+    @include inner-padding();
+
     a {
-        display: inline-block;
-        color: $base-font-color;
-        background-color: #eee;
         margin: $tag-btn-padding / 2 10px $tag-btn-padding / 2 0px;
-        text-decoration: none;
-        padding: 5px 10px;
-        border-radius: 5px;
-        border: #eee solid 1px;
-        
-        @include the-transition(all);
-        @include pressed() {
-            border: #e00 solid 1px;
-            color: #e00;
-        }
-        i {
-            margin-right: 2px;
-        }
+    }
+
+    &.small {
+        padding-left: $article-small-inner-padding;
+        padding-right: $article-small-inner-padding;
+    }
+}
+
+.btn-tag {
+    display: inline-block;
+    color: $base-font-color;
+    background-color: #eee;
+    // background-color: $top-border-color;
+    // @include shadow-base();
+    
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: #eee solid 1px;
+    // color: #eee;
+    
+    @include the-transition(all);
+    @include pressed() {
+        border: $top-border-color solid 1px;
+        color: $top-border-color;
+    }
+    i {
+        margin-right: 2px;
     }
 }
 
@@ -147,6 +165,10 @@ h1.article-title {
     padding-bottom: 5px;
     @media screen and (max-width: $font-media-max-width) {
         font-size: $base-font-size * 2.125;
+    }
+    &.small {
+        font-size: $base-font-size * 1.5;
+        padding-bottom: 10px;
     }
 }
 .article-title-link {
@@ -166,6 +188,9 @@ $article-info-color: #999;
     padding-top: 20px;
     border-bottom: #eee solid 1px;
     @include inner-padding();
+    &.small {
+        padding: 16px $article-small-inner-padding;
+    }
 }
 .article-info-container {
     color: $article-info-color;
@@ -196,7 +221,7 @@ $article-info-color: #999;
         // transition: all 0.15s linear;
         @include the-transition(color background-color);
         @include pressed() {
-            background-color: #e00;
+            background-color: $top-border-color;
             color: #fff;
         }
     }

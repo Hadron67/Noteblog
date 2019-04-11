@@ -73,7 +73,8 @@ module.exports = async (app) => {
         title: "Hadroncfy's Notebook",
         mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML',
         fontawsomeURL : 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
-        webRoot: 'docs'
+        webRoot: 'docs',
+        domain: '124.16.113.131:8080'
     };
 
     app.markdown.setRenderer(getMyRenderer(app));
@@ -90,14 +91,16 @@ module.exports = async (app) => {
         'src/sass/article.scss',
         'src/sass/category.scss',
         'src/sass/header.scss',
-        'src/sass/search.scss'
+        'src/sass/search.scss',
+        'src/sass/footer.scss',
+        'src/sass/tags.scss'
     ]);
 
     // posts
     let postArg = {
         tags: '/tags/',
         archive: '/archive/',
-        category: '/category/'
+        category: '/category/',
     };
     let postFiles = (await app.helper.readFiles('src/posts')).filter(f => f.endsWith('.md'));
     let posts = postFiles.map(f => app.markdown.register(app.markdown.dateToPath('/article'), 'src/posts/' + f, {arg: postArg}));
@@ -127,6 +130,7 @@ module.exports = async (app) => {
         page.article.tags.length > 0 && tags.update(page, page.article.tags);
         category.update(page, page.article.category);
     });
+    tags.registerTemplate(postArg.tags + 'index.html', a => app.layouts.tagCloud, {arg: postArg});
     let listener = page => pg.update(page);
     posts.forEach(p => p.on('update', listener));
 };
