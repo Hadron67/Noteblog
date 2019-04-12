@@ -10,6 +10,10 @@ app.registerModule = (src, cb) => {
             if (typeof m === 'function'){
                 m(app);
                 app.logger.info(`Module ${src} loaded`);
+                if (cb){
+                    cb();
+                    cb = null;
+                }
             }
         }
         catch(e){
@@ -20,9 +24,10 @@ app.registerModule = (src, cb) => {
     app.watch(src, (event, fn) => event === 'change' && refresh());
 }
 
-let r = require('./blog.config.js')(app);
-if (r.then){
-    r.then(() => app.startServer(8080));
+async function main(){
+    let config = await (require('./blog.config.js'))(app);
+    let theme = require('./theme/' + config.theme + '/index.js');
+    await theme(app, config);
 }
-else
-    app.startServer(8080);
+
+main().then(() => app.startServer(8080)).catch(e => app.logger.err(e.toString()));

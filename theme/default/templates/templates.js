@@ -78,7 +78,7 @@ module.exports = main => {
                         {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: '/archive/'},
                         {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: '/category/'},
                         {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: '/tags/'},
-                        {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes'},
+                        {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes/'},
                         {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
                     ].map(({name, icon, path}) => [
                         `<li${active === name ? ' class="active"' : ''}>`,
@@ -102,7 +102,7 @@ module.exports = main => {
         // '</a>',
         // '<br />',
         'This work is licensed under a ',
-        '<a rel="license" href="http://creativecommons.org/licenses/by/4.0/">',
+        '<a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank">',
             'Creative Commons Attribution 4.0 International License',
         '</a>.'
     ];
@@ -113,13 +113,9 @@ module.exports = main => {
                 '<div class="footer-right">',
                     '<span>Links</span>',
                     '<ul class="link-list">',
-                        [
-                            {name: 'zzy(BG6GCZ)', url: 'https://zzy.blog.ustc.edu.cn/'},
-                            {name: 'wxy', url: 'https://wxyhly.github.io/'},
-                            {name: 'futantan', url: 'https://www.futantan.com/'}
-                        ].map(({name, url}) => [
+                        _forIn(config.links, (name, url) => [
                             '<li>',
-                                `<a href="${url}">${name}</a>`,
+                                `<a href="${url}" target="_blank">${name}</a>`,
                             '</li>'
                         ]),
                     '</ul>',
