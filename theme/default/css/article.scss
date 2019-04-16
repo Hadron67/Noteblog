@@ -3,6 +3,8 @@ $inner-container-media-max-width: 500px;
 $inner-padding-large: 30px;
 $inner-padding-small: 15px;
 
+$paragraph-clearance: 15px;
+
 $article-small-inner-padding: 20px;
 
 @mixin no-inner-padding {
@@ -22,6 +24,7 @@ $article-small-inner-padding: 20px;
 }
 
 .article-inner-container {
+    @extend %clearfix;
     padding-top: 30px;
     padding-bottom: 25px;
     @include inner-padding();
@@ -36,11 +39,68 @@ $article-small-inner-padding: 20px;
             margin-bottom: 0px;
         }
     }
-    p, blockquote, hr, h1, div.head2-wrapper, h3, h4, h5, pre, ul, ol {
-        margin-bottom: 15px;
+    p, blockquote, hr, h1, div.head2-wrapper, div.p-with-img, h3, h4, h5, pre, ul, ol {
+        // margin-bottom: $paragraph-clearance;
+        margin-top: 15px;
     }
-    p:last-child {
-        margin-bottom: 0px;
+    p, ul, ol {
+        line-height: 1.5;
+    }
+    ul {
+        list-style: disc;
+    }
+    p:first-child, .p-with-img:first-child {
+        margin-top: 0;
+    }
+    div.p-with-img {
+        > p {
+            margin-top: 0;
+        }
+        &.partial {
+            margin-top: 0;
+            > p {
+                &::before {
+                    content: "";
+                }
+            }
+        }
+    }
+    .img-container {
+        text-align: center;
+        figure {
+            display: inline-block;
+            max-width: 100%;
+            margin: auto;
+            padding: 10px;
+            &.right {
+                float: right;
+            }
+            &.left {
+                float: left;
+            }
+            figcaption {
+                text-align: center;
+                font-size: $base-font-size * 0.8;
+                color: #777;
+            }
+        }
+    }
+    &.indent {
+        p, .p-with-img {
+            + p{
+                &.article-more-btn {
+                    margin-top: $paragraph-clearance;
+                }
+                margin-top: 0;
+            }
+            + .p-with-img {
+                margin-top: 0;
+            }
+        }
+        p::before {
+            content: "\3000\3000";
+            display: inline;
+        }
     }
     h1, h2, h3, h4, h5 {
         font-weight: 500;
@@ -79,7 +139,7 @@ $article-small-inner-padding: 20px;
     }
     h3 {
         font-size: $base-font-size * 1.375;
-        border-bottom: #aaa solid 1px;
+        border-bottom: #eee solid 1px;
         padding-bottom: 2px;
         // @media screen and (max-width: $font-media-max-width) {
         //     font-size: $base-font-size * 1.327;

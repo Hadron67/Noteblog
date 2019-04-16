@@ -248,7 +248,7 @@ module.exports = main => {
                 '</h1>',
                 postInfo(article, arg),
             '</header>',
-            '<div class="article-inner-container">',
+            `<div class="article-inner-container${article.indent ? ' indent' : ''}">`,
                 content,
             '</div>',
             postTags(article, arg),

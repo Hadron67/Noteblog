@@ -1,5 +1,7 @@
 'use strict';
 
+let theme = require('./theme/default/index.js');
+
 async function readPostFiles(app, dirs){
     let p = await Promise.all(dirs.map(p => app.helper.readFiles(p)));
     let ret = [];
@@ -12,8 +14,6 @@ async function readPostFiles(app, dirs){
 }
 
 module.exports = async (app) => ({
-    theme: 'default',
-
     title: "Hadroncfy's Notebook",
     webRoot: 'docs/',
     domain: '124.16.113.131:8080',
@@ -24,20 +24,25 @@ module.exports = async (app) => ({
         'static/js/'
     ],
 
-    posts: await readPostFiles(app, [
-        'src/posts/',
-        'src/posts-old/'
-    ]),
+    
+    plugins: [
+        theme({
+            posts: await readPostFiles(app, [
+                'src/posts/',
+                'src/posts-old/'
+            ]),
 
-    articles: '/article/',
-    articlesPerPage: 5,
-    archive: {path: '/archive/', pagesPerPage: 20},
-    tags: {path: '/tags/', pagesPerPage: 20},
-    categories: {path: '/category/', pagesPerPage: 20},
-
-    links: {
-        'zzy(BG6GCZ)': 'https://zzy.blog.ustc.edu.cn/',
-        'wxy': 'https://wxyhly.github.io/',
-        'futantan': 'https://www.futantan.com/'
-    }
+            articles: '/article/',
+            articlesPerPage: 5,
+            archive: {path: '/archive/', pagesPerPage: 20},
+            tags: {path: '/tags/', pagesPerPage: 20},
+            categories: {path: '/category/', pagesPerPage: 20},
+        
+            links: {
+                'zzy(BG6GCZ)': 'https://zzy.blog.ustc.edu.cn/',
+                'wxy': 'https://wxyhly.github.io/',
+                'futantan': 'https://www.futantan.com/'
+            }
+        })
+    ]
 });

@@ -3,7 +3,6 @@
 const pwd = __dirname + '/';
 const _ = p => pwd + p;
 
-
 function compareDate(a, b){
     let d1 = a.article.date, d2 = b.article.date;
     return d1 < d2;
@@ -41,14 +40,84 @@ function getMyRenderer(app){
         }
         visitCode(node) {
             if (node.lang === 'mathjax-defs'){
-                this.text += `<script type="math/tex">%<![CDATA[${addNewLineToEnds(node.val)}%]]></script>`;
+                // XXX: A hack! 
+                this.text += `<div class="mathjax-defs"><script type="math/tex">%<![CDATA[${addNewLineToEnds(node.val)}%]]></script></div>`;
             }
             else
                 this.text += `<pre><code lang="${escapeS(node.lang)}">${escapeHTML(node.val)}</code></pre>`;
         }
         visitImage(node) {
             let src = /^https?:\/\//.test(node.src) ? node.src : `/static/img/${escapeS(node.src)}`;
-            this.text += `<img src="${src}" alt="${escapeS(node.alt)}" />`;
+            let inline = false, float = '', styles = [];
+            for (let a of node.attrs){
+                switch (a){
+                    case 'inline': inline = true; break;
+                    case 'left': float = 'left'; inline = false; break;
+                    case 'right': float = 'right'; inline = false; break;
+                    default:
+                        if (/^"[^"]*"$/.test(a)){
+                            styles.push(a.substr(1, a.length - 2) + ';');
+                        }
+                }
+            }
+            let classes = [];
+            if (float !== ''){
+                classes.push(float);
+            }
+            classes = classes.length > 0 ? ` class="${classes.join(' ')}"` : '';
+            let styleString = styles.length > 0 ? ` style="${styles.join(' ')}"` : '';
+
+            if (inline){
+                this.text += `<img class="inline"${styleString} src="${src}" alt="${escapeS(node.alt)}" />`;
+            }
+            else {
+                this.text += [
+                    '<div class="img-container">',
+                        `<figure${classes}>`,
+                            `<img src="${src}"${styleString} alt="${escapeS(node.alt)}" />`,
+                            node.alt !== '' ? `<figcaption><span>${escapeHTML(node.alt)}</span></figcaption>` : '',
+                        '</figure>',
+                    '</div>'
+                ].join('');
+            }
+        }
+
+        enterParagraph(node){
+            let saved = this.text;
+            this.text = '';
+            let i, _a = node.children;
+            for (i = 0; i < _a.length; i++){
+                if (this.isBlockImage(_a[i])){
+                    break;
+                }
+                _a[i].accept(this);
+            }
+            let hasPreceedingP = false;
+            if (i > 0){
+                this.text = saved + `<p>${this.text}</p>`;
+                hasPreceedingP = true;
+            }
+            else {
+                this.text = saved;
+            }
+            while (i < _a.length){
+                this.text += `<div class="p-with-img${hasPreceedingP ? ' partial' : ''}">`;
+                _a[i].accept(this);
+                i++;
+                if (i < _a.length && !this.isBlockImage(_a[i])){
+                    this.text += '<p>';
+                    while (i < _a.length && !this.isBlockImage(_a[i])){
+                        _a[i].accept(this);
+                        i++;
+                    }
+                    this.text += '</p>';
+                }
+                this.text += '</div>';
+            }
+            return true;
+        }
+        leaveParagraph(){
+            this.text += '</p>';
         }
 
         getHeadingNodeID(node){
@@ -58,6 +127,21 @@ function getMyRenderer(app){
             }
             else 
                 return null;
+        }
+        isBlockImage(n){
+            if (n.type === NodeType.IMAGE){
+                let inline = false;
+                for (let attr of n.attrs){
+                    if (attr === 'left' || attr === 'right'){
+                        return true;
+                    }
+                    if (attr === 'inline'){
+                        inline = true;
+                    }
+                }
+                return !inline;
+            }
+            return false;
         }
     };
 }
@@ -77,10 +161,6 @@ async function readPostFiles(app, dirs, arg){
     return ret.map(f => app.markdown.register(app.markdown.dateToPath('/article'), f, {arg}));
 }
 
-async function registerStaticDir(app, webRoot, dir){
-    (await app.helper.readFiles(webRoot + dir)).forEach(f => app.static.register('/' + dir + f));
-}
-
 /** @typedef{{path: string, pagesPerPage: number}} Pagination */
 
 /** @typedef{{webRoot: string, 
@@ -95,44 +175,43 @@ async function registerStaticDir(app, webRoot, dir){
 
 /**
  * @param {*} app 
- * @param {BlogConfig} config 
+ * @param {BlogConfig} params 
  */
-async function main(app, config){
-    app.config = config;
-    config.mathjaxURL = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML';
-    config.fontawsomeURL = 'https://use.fontawesome.com/releases/v5.8.1/css/all.css';
+async function main(app, params){
+    app.config.mathjaxURL = params.mathjaxURL || 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML';
+    app.config.fontawsomeURL = params.fontawsomeURL || 'https://use.fontawesome.com/releases/v5.8.1/css/all.css';
+    app.config.links = params.links || {};
 
     let postArg = {
-        tags: config.tags.path,
-        archive: config.archive.path,
-        category: config.categories.path,
+        tags: params.tags.path,
+        archive: params.archive.path,
+        category: params.categories.path,
     };
 
-    Promise.all(config.staticDirs.map(dir => registerStaticDir(app, config.webRoot, dir)));
     app.scss.register('/css/main.css', (await app.helper.readFiles(_('css/'), 'main.scss')).map(f => _('css/') + f));
 
     app.markdown.setRenderer(getMyRenderer(app));
     
     await app.helper.registerModule(_('templates/templates.js'));
 
-    let posts = config.posts.map(p => app.markdown.register(app.markdown.dateToPath(config.articles), p, {arg: postArg}));
+    let posts = params.posts.map(p => app.markdown.register(app.markdown.dateToPath(params.articles), p, {arg: postArg}));
 
-    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName('/'), config.articlesPerPage, {arg: postArg});
-    let archive = new app.helper.Paginator(compareDate, a => app.layouts.archive(a), indexToPageName(config.archive.path), config.archive.pagesPerPage, {arg: postArg});
+    let mainPage = new app.helper.Paginator(compareDate, arg => app.layouts.page(arg), indexToPageName('/'), params.articlesPerPage, {arg: postArg});
+    let archive = new app.helper.Paginator(compareDate, a => app.layouts.archive(a), indexToPageName(params.archive.path), params.archive.pagesPerPage, {arg: postArg});
     let tags = new app.helper.Tags(
-        config.tags.path,
+        params.tags.path,
         a => app.layouts.tag(a),
         indexToPageName(''),
         compareDate,
-        config.tags.pagesPerPage,
+        params.tags.pagesPerPage,
         {arg: postArg}
     );
     let category = new app.helper.Categorizer(
-        config.categories.path,
+        params.categories.path,
         a => app.layouts.category(a),
         indexToPageName(''),
         compareDate,
-        config.categories.pagesPerPage,
+        params.categories.pagesPerPage,
         {arg: postArg}
     );
     let pg = new app.helper.PageGroup((page, n) => {
@@ -143,9 +222,10 @@ async function main(app, config){
         page.article.tags.length > 0 && tags.update(page, page.article.tags);
         category.update(page, page.article.category);
     });
-    tags.registerTemplate(config.tags.path + 'index.html', a => app.layouts.tagCloud(a), {arg: postArg});
+    tags.registerTemplate(params.tags.path + 'index.html', a => app.layouts.tagCloud(a), {arg: postArg});
     let listener = page => pg.update(page);
     posts.forEach(p => p.on('update', listener));
 }
 
-module.exports = main;
+// module.exports = main;
+module.exports = params => app => app.on('load', () => main(app, params));

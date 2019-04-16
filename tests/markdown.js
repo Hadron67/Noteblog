@@ -327,7 +327,7 @@ thyvrtvh
         '</article>'
     );
 
-    dtestParse('Html tags', `
+    testParse('Html tags', `
     # Html test
     <!-- toc -->
     <img src="hkm" />
@@ -345,6 +345,18 @@ thyvrtvh
             '</div>',
             '<p>',
                 'rfnj, <ems>bniz</ems>',
+            '</p>',
+        '</article>'
+    );
+
+    testParse('Images with attributes', `
+    # Image
+    ![Hadron octolet|right|360px](/img/octolet.svg)
+    `, 
+        '<article>',
+            '<h1>Image</h1>',
+            '<p>',
+                '<img src="/img/octolet.svg" attrs="right 360px" alt="Hadron octolet" />',
             '</p>',
         '</article>'
     );

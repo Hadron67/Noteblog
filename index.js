@@ -2,6 +2,10 @@
 
 let app = require('./lib/main.js')();
 
+async function registerStaticDir(app, webRoot, dir){
+    (await app.helper.readFiles(webRoot + dir)).forEach(f => app.static.register('/' + dir + f));
+}
+
 app.registerModule = (src, cb) => {
     function refresh(){
         try {
@@ -26,8 +30,13 @@ app.registerModule = (src, cb) => {
 
 async function main(){
     let config = await (require('./blog.config.js'))(app);
-    let theme = require('./theme/' + config.theme + '/index.js');
-    await theme(app, config);
+    app.config = config;
+    config.plugins.forEach(p => p(app));
+    await Promise.all(config.staticDirs.map(dir => registerStaticDir(app, config.webRoot, dir)));
+    app.emit('load');
+
+    // let theme = require('./theme/' + config.theme + '/index.js');
+    // await theme(app, config);
 }
 
 main().then(() => app.startServer(8080)).catch(e => app.logger.err(e.toString()));
