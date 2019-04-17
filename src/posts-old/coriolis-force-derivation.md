@@ -18,7 +18,6 @@ indent: true
 
 <!-- more -->
 到底错在哪呢？原来当我选自己为参考系后，小球不仅受到径向方向上的离心力，还受到了**科里奥利力**，正是这个力使得小球偏离了直线轨迹．下面的这张图展示了受到科里奥利力和离心力的小球的运动轨迹．
-
 ![（图片来自维基百科）](https://upload.wikimedia.org/wikipedia/commons/b/b6/Corioliskraftanimation.gif)
 
 大家如果学过大学物理应该知道科里奥利力的计算公式是

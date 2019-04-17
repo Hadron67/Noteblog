@@ -18,6 +18,27 @@ module.exports = main => {
     function _if(cond, cb){
         return cond ? cb() : '';
     }
+
+    function script(s){
+        let ret = '';
+        let c1 = 'a'.charCodeAt(0), c2 = 'A'.charCodeAt(0);
+        for (let i = 0; i < s.length; i++){
+            let c = s.charAt(i);
+            if (/[A-Z]/.test(c)){
+                ret += '&#x' + (c.charCodeAt(0) - c2 + 0x1D49C).toString(16).toUpperCase() + ';';
+            }
+            else if (/[a-z]/.test(c)){
+                ret += '&#x' + (c.charCodeAt(0) - c1 + 0x1D4B6).toString(16).toUpperCase() + ';';
+            }
+            // if (/[a-zA-Z]/.test(c)){
+            //     ret += `&${c}scr;`;
+            // }
+            else {
+                ret += c;
+            }
+        }
+        return ret;
+    }
     
     let config = main.config;
     
@@ -126,7 +147,7 @@ module.exports = main => {
                         creativeCommon,
                     '</p>',
                     '<p>',
-                        'Powered by <a href="https://github.com/Hadron67/blog">Blogger</a>, theme written by Hadroncfy.',
+                        'Powered by <a href="https://github.com/Hadron67/blog" target="_blank">Blogger</a>, theme written by Hadroncfy.',
                     '</p>',
                     '<p>',
                         '<i class="fab fa-html5"></i> ',
@@ -257,7 +278,7 @@ module.exports = main => {
     
     let post = ({article, arg, path}) => outter([
         "<h1>Welcome to</h1>",
-        "<h1>Hadroncfy's Notebook</h1>",
+        `<h1>Hadroncfy's Notebook</h1>`,
     ], '', path, postLike(article,
         escapeHTML(article.title),
         article.content,
@@ -266,7 +287,7 @@ module.exports = main => {
     
     let page = ({pages, path, arg}) => outter([
         "<h1>Welcome to</h1>",
-        "<h1>Hadroncfy's Notebook</h1>",
+        `<h1>Hadroncfy's Notebook</h1>`,
     ], 'Home', path, [
         '<ul class="main-post-list">',
         pages.getPages().map(page => [
@@ -282,7 +303,8 @@ module.exports = main => {
                 ),
             '</li>'
         ]),
-        '</ul>'
+        '</ul>',
+        pageNav(pages.pagePaths, pages.index)
     ]);
     
     function partitionByDate(pages){
@@ -322,7 +344,7 @@ module.exports = main => {
 
     let postDateList = (pages, args) => [
         '<ul class="post-date-list">',
-            partitionByDate(pages).map(({date, pages}) => [
+            partitionByDate(pages.getPages()).map(({date, pages}) => [
                 '<li>',
                     `<h2 class="post-list-date">${monthNames[date.getMonth()]}, ${escapeHTML(date.getFullYear().toString())}</h2>`,
                     '<ul class="post-list">',
@@ -334,8 +356,65 @@ module.exports = main => {
                     '</ul>',
                 '</li>'
             ]),
-        '</ul>'
+        '</ul>',
+        pageNav(pages.pagePaths, pages.index)
     ];
+
+    let pageNav = (pagePaths, index, limit = 1) => [
+        '<nav class="page-nav">',
+            '<div>',
+                () => {
+                    let active = i => i === index ? ' active' : '';
+                    let ret = [];
+                    if (index > 0){
+                        ret.push(
+                            `<a href="${escapeS(pagePaths[index - 1])}" class="btn">`,
+                                '<i class="fas fa-chevron-left"></i>',
+                            '</a>'
+                        );
+                    }
+                    if (pagePaths.length > 1){
+                        ret.push('<ul class="page-nav-list">');
+                        let i = 0;
+                        ret.push(`<li><a href="${escapeS(pagePaths[0])}" class="btn${active(0)}">1</a></li>`);
+                        i++;
+                        if (i < index - limit){
+                            ret.push('<li><a href="javascript:;" class="btn dotted"></a></li>');
+                            i = index - limit;
+                        }
+                        while (i < index){
+                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
+                            i++;
+                        }
+                        if (i === index){
+                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn active">${i + 1}</a></li>`);
+                            i++;
+                        }
+                        while (i < pagePaths.length && i <= index + limit){
+                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
+                            i++;
+                        }
+                        if (i < pagePaths.length - 1){
+                            ret.push('<li><a href="javascript:;" class="btn dotted"></a></li>');
+                            i = pagePaths.length - 1;
+                        }
+                        if (i === pagePaths.length - 1){
+                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
+                        }
+                        ret.push('</ul>');
+                    }
+                    if (index < pagePaths.length - 1){
+                        ret.push(
+                            `<a href="${escapeS(pagePaths[index + 1])}" class="btn">`,
+                                '<i class="fas fa-chevron-right"></i>',
+                            '</a>'
+                        );
+                    }
+                    return ret;
+                },
+            '</div>',
+        '</nav>'
+    ]
     
     let category = ({pages, node, pathBase, path, arg}) => outter([
         "<h1>Categories</h1>",
@@ -355,6 +434,7 @@ module.exports = main => {
                 let p = pathBase + node.getPath().map(n => regulateName(n.name) + '/').join('');
                 if (subcat.length > 0){
                     return [
+                        '<h3 class="post-list-date">Subcategories</h3>',
                         '<ul class="subcategory-container">',
                             subcat.map(c => [
                                 `<li><a class="category-btn btn-category" href="${p}${regulateName(c)}/">`,
@@ -369,7 +449,7 @@ module.exports = main => {
                     return '';
             },
             '<div class="category-post-list">',
-                postDateList(pages.getPages(), arg),
+                postDateList(pages, arg),
             '</div>',
         '</div>',
     ]);
@@ -378,7 +458,7 @@ module.exports = main => {
         '<h1>Archive</h1>'
     ], 'Archive', path, [
         '<div class="archive-container">',
-            postDateList(pages.getPages(), arg),
+            postDateList(pages, arg),
         '</div>'
     ]);
 

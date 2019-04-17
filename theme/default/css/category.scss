@@ -16,6 +16,7 @@ span.category-divider {
         border-radius: 5px;
         padding: 5px 10px;
         // font-size: $base-font-size * 1.1;
+        margin-bottom: 20px;
         color: #777;
         a {
             color: #777;
@@ -33,7 +34,8 @@ ul.subcategory-container {
     margin-top: 10px;
     > li {
         display: inline-block;
-        margin: $category-item-margin/2 $category-item-margin $category-item-margin/2 0;
+        // margin: $category-item-margin/2 $category-item-margin $category-item-margin/2 0;
+        padding: 10px;
     }
     a {
         color: $base-font-color;

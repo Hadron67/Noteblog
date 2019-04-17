@@ -1,0 +1,34 @@
+ul.page-nav-list {
+    list-style: none;
+    display: inline-block;
+    > li {
+        display: inline-block;
+        margin: 0 3px;
+    }
+}
+$nav-btn-width: 35px;
+.page-nav {
+    > div {
+        text-align: center;
+    }
+    .btn {
+        display: inline-block;
+        color: #555;
+        width: $nav-btn-width;
+        height: $nav-btn-width;
+        line-height: $nav-btn-width;
+        text-align: center;
+        border-radius: 50%;
+        @include the-transition(background-color);
+        @include pressed() {
+            background-color: #bbb;
+        }
+        &.active {
+            background-color: $plastic-green;
+            color: #fff;
+        }
+        &.dotted::before {
+            content: "\22EF";
+        }
+    }
+}

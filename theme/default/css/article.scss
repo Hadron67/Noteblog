@@ -60,7 +60,7 @@ $article-small-inner-padding: 20px;
             margin-top: 0;
             > p {
                 &::before {
-                    content: "";
+                    display: none;
                 }
             }
         }
@@ -70,18 +70,27 @@ $article-small-inner-padding: 20px;
         figure {
             display: inline-block;
             max-width: 100%;
-            margin: auto;
+            margin: 4px auto;
             padding: 10px;
+            @include the-transition(all);
+            @include transform(scale(1));
+            @include shadow-base();
+            background-color: #fafafa;
             &.right {
                 float: right;
+                margin: 5px;
             }
             &.left {
                 float: left;
+                margin: 5px;
             }
             figcaption {
                 text-align: center;
                 font-size: $base-font-size * 0.8;
                 color: #777;
+            }
+            &:hover {
+                @include transform(scale(1.05));
             }
         }
     }
@@ -158,7 +167,7 @@ $article-small-inner-padding: 20px;
         border-left: $top-border-color solid 5px;
         color: $top-border-color;
         margin-bottom: 20px;
-        clear: both;
+        clear: left;
         @include no-inner-padding();
     }
 

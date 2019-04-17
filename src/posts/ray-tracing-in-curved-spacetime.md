@@ -7,4 +7,4 @@ tags:
 - General relativity
 - Gallery
 ---
-![Black hole](2019/black-hole-large.png)
+![Ray-tracing Rendering of a Schwarzschild Black hole|"width: 500px"](2019/black-hole-large.png)
