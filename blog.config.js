@@ -13,8 +13,7 @@ module.exports = async (app) => ({
 
     staticDirs: [
         'static/img/2016/',
-        'static/img/2019/',
-        'static/js/'
+        'static/img/2019/'
     ],
 
     links: {
@@ -34,6 +33,7 @@ module.exports = async (app) => ({
             tags: {path: '/tags/', pagesPerPage: 20},
             categories: {path: '/category/', pagesPerPage: 20},
         }),
-        theme()
+        theme(),
+        app.indexGenerator('/search/content.json')
     ]
 });

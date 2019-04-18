@@ -3,7 +3,7 @@
 let app = require('./lib/main.js')();
 
 async function registerStaticDir(app, webRoot, dir){
-    (await app.helper.readFiles(webRoot + dir)).forEach(f => app.static.register('/' + dir + f));
+    (await app.helper.readFiles(webRoot + dir)).forEach(f => app.file.register('/' + dir + f, webRoot + dir + f, true));
 }
 
 app.registerModule = (src, cb) => {

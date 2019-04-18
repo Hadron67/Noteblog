@@ -148,7 +148,7 @@ module.exports = main => {
                         creativeCommon,
                     '</p>',
                     '<p>',
-                        'Powered by <a href="https://github.com/Hadron67/blog" target="_blank">Blogger</a>, theme written by Hadroncfy.',
+                        'Powered by <a href="https://github.com/Hadron67/Noteblog" target="_blank">Noteblog</a>, theme written by Hadroncfy.',
                     '</p>',
                     '<p>',
                         '<i class="fab fa-html5"></i> ',
@@ -189,7 +189,7 @@ module.exports = main => {
                 footer(path),
                 searchPanel,
                 '<a id="totop" href="javascript:;" title="Back to top"><i class="fas fa-chevron-up"></i></a>',
-                '<script src="/static/js/main.js"></script>',
+                '<script src="/js/main.js"></script>',
                 mathjax(),
             '</body>',
         '</html>'
@@ -361,7 +361,7 @@ module.exports = main => {
         pageNav(pages.pagePaths, pages.index)
     ];
 
-    let pageNav = (pagePaths, index, limit = 1) => [
+    let pageNav = (pagePaths, index, limit = 2) => _if(pagePaths.length > 1, () => [
         '<nav class="page-nav">',
             '<div>',
                 () => {
@@ -374,39 +374,57 @@ module.exports = main => {
                             '</a>'
                         );
                     }
-                    if (pagePaths.length > 1){
-                        ret.push('<ul class="page-nav-list">');
-                        let i = 0;
-                        ret.push(`<li><a href="${escapeS(pagePaths[0])}" class="btn${active(0)}">1</a></li>`);
-                        i++;
-                        if (i < index - limit){
-                            ret.push('<li><a href="javascript:;" class="btn dotted"></a></li>');
-                            i = index - limit;
-                        }
-                        while (i < index){
-                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
-                            i++;
-                        }
-                        if (i === index){
-                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn active">${i + 1}</a></li>`);
-                            i++;
-                        }
-                        while (i < pagePaths.length && i <= index + limit){
-                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
-                            i++;
-                        }
-                        if (i < pagePaths.length - 1){
-                            ret.push('<li><a href="javascript:;" class="btn dotted"></a></li>');
-                            i = pagePaths.length - 1;
-                        }
-                        if (i === pagePaths.length - 1){
-                            ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
-                        }
-                        ret.push('</ul>');
+                    else {
+                        ret.push(
+                            `<a href="javascript:;" class="btn disabled">`,
+                                '<i class="fas fa-chevron-left"></i>',
+                            '</a>'
+                        );
                     }
+                    ret.push(
+                        '<a href="javascript:;" class="page-nav-mobile">',
+                            (index + 1) + '/' + pagePaths.length,
+                        '</a>'
+                    );
+
+                    ret.push('<ul class="page-nav-list">');
+                    let i = 0;
+                    ret.push(`<li><a href="${escapeS(pagePaths[0])}" class="btn${active(0)}">1</a></li>`);
+                    i++;
+                    if (i < index - limit){
+                        ret.push('<li><a href="javascript:;" class="btn dotted"></a></li>');
+                        i = index - limit;
+                    }
+                    while (i < index){
+                        ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
+                        i++;
+                    }
+                    if (i === index){
+                        ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn active">${i + 1}</a></li>`);
+                        i++;
+                    }
+                    while (i < pagePaths.length && i <= index + limit){
+                        ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
+                        i++;
+                    }
+                    if (i < pagePaths.length - 1){
+                        ret.push('<li><a href="javascript:;" class="btn dotted"></a></li>');
+                        i = pagePaths.length - 1;
+                    }
+                    if (i === pagePaths.length - 1){
+                        ret.push(`<li><a href="${escapeS(pagePaths[i])}" class="btn">${i + 1}</a></li>`);
+                    }
+                    ret.push('</ul>');
                     if (index < pagePaths.length - 1){
                         ret.push(
                             `<a href="${escapeS(pagePaths[index + 1])}" class="btn">`,
+                                '<i class="fas fa-chevron-right"></i>',
+                            '</a>'
+                        );
+                    }
+                    else {
+                        ret.push(
+                            `<a href="javascript:;" class="btn disabled">`,
                                 '<i class="fas fa-chevron-right"></i>',
                             '</a>'
                         );
@@ -415,7 +433,7 @@ module.exports = main => {
                 },
             '</div>',
         '</nav>'
-    ]
+    ]);
     
     let category = ({pages, node, pathBase, path, arg}) => outter([
         "<h1>Categories</h1>",

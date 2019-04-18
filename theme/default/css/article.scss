@@ -95,14 +95,14 @@ $article-small-inner-padding: 20px;
         }
     }
     &.indent {
-        p, .p-with-img {
+        p, .p-with-img, ul {
             + p{
                 &.article-more-btn {
                     margin-top: $paragraph-clearance;
                 }
                 margin-top: 0;
             }
-            + .p-with-img {
+            + .p-with-img, + ul {
                 margin-top: 0;
             }
         }

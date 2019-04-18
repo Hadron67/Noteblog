@@ -1,3 +1,9 @@
+@mixin page-nav-mobile(){
+    @media screen and (max-width: 530px) {
+        @content;
+    }
+}
+
 ul.page-nav-list {
     list-style: none;
     display: inline-block;
@@ -5,8 +11,11 @@ ul.page-nav-list {
         display: inline-block;
         margin: 0 3px;
     }
+    @include page-nav-mobile(){
+        display: none;
+    }
 }
-$nav-btn-width: 35px;
+$nav-btn-width: 40px;
 .page-nav {
     > div {
         text-align: center;
@@ -29,6 +38,23 @@ $nav-btn-width: 35px;
         }
         &.dotted::before {
             content: "\22EF";
+        }
+        &.disabled {
+            color: #aaa;
+        }
+    }
+}
+.page-nav-mobile {
+    display: none;
+    @include page-nav-mobile(){
+        margin: 0 5px;
+        padding: 5px;
+        display: inline-block;
+        color: #555;
+        border-radius: 2px;
+        @include pressed(){
+            background-color: #bbb;
+            color: #555;
         }
     }
 }
