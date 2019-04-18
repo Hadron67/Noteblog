@@ -1,6 +1,6 @@
 'use strict';
 
-let app = require('./lib/main.js')();
+let app = require('../lib/main.js')();
 
 async function registerStaticDir(app, webRoot, dir){
     (await app.helper.readFiles(webRoot + dir)).forEach(f => app.static.register('/' + dir + f));
@@ -28,8 +28,8 @@ app.registerModule = (src, cb) => {
     app.watch(src, (event, fn) => event === 'change' && refresh());
 }
 
-async function main(){
-    let config = await (require('./blog.config.js'))(app);
+async function init(configFile){
+    let config = await (require(configFile))(app);
     app.config = config;
 
     let asyncPlugins = [];

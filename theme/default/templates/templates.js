@@ -6,7 +6,8 @@ module.exports = main => {
     let escapeHTML = main.helper.escapeHTML;
     let regulateName = main.helper.regulateName;
     let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    
+    let ext = main.config.ext;
+
     function _forIn(obj, cb){
         let ret = [];
         for (let k in obj){
@@ -95,10 +96,10 @@ module.exports = main => {
                         '<a class="nav-btn" id="btn-close-menu" href="javascript:;"><i class="fas fa-arrow-left"></i></a>',
                     '</li>',
                     [
-                        {name: 'Home', icon: '<i class="fas fa-home"></i>', path: '/'},
-                        {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: '/archive/'},
-                        {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: '/category/'},
-                        {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: '/tags/'},
+                        {name: 'Home', icon: '<i class="fas fa-home"></i>', path: ext.blog},
+                        {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: ext.archive},
+                        {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: ext.category},
+                        {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: ext.tags},
                         {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes/'},
                         {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
                     ].map(({name, icon, path}) => [
@@ -204,7 +205,7 @@ module.exports = main => {
         return list;
     }
     
-    let postInfo = (article, arg) => {
+    let postInfo = (article) => {
         let date = article.date;
         return [
             '<div class="article-info-container">',
@@ -217,7 +218,7 @@ module.exports = main => {
                     '</time>',
                 '</span>',
                 _if(article.category, () => {
-                    let list = articleCategoryList(arg.category, article.category);
+                    let list = articleCategoryList(ext.category, article.category);
                     let content = [];
                     for (let i = 0; i < list.length; i++){
                         if (i > 0){
@@ -246,14 +247,14 @@ module.exports = main => {
         ];
     };
     
-    let postTags = (article, arg, small = false) => {
+    let postTags = (article, small = false) => {
         if (article.tags.length === 0){
             return '';
         }
         return [
             `<footer class="post-footer${small ? ' small' : ''}">`,
                 article.tags.map(tag => [
-                    `<a class="btn-tag" href="${escapeS(arg.tags)}${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
+                    `<a class="btn-tag" href="${escapeS(ext.tags)}${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
                         `<i class="fas fa-tag"></i>${escapeHTML(tag)}`,
                     '</a>',
                 ]),
@@ -267,12 +268,12 @@ module.exports = main => {
                 '<h1 class="article-title">', 
                     header,                
                 '</h1>',
-                postInfo(article, arg),
+                postInfo(article),
             '</header>',
             `<div class="article-inner-container${article.indent ? ' indent' : ''}">`,
                 content,
             '</div>',
-            postTags(article, arg),
+            postTags(article),
         '</article>',
     ];
     
@@ -325,7 +326,7 @@ module.exports = main => {
     let tag = ({pages, arg, tag, path}) => outter([
         `<h1>Tag: </h1>`,
         `<h2>${escapeHTML(tag)}</h2>`
-    ], '', path, postDateList(pages.getPages(), arg));
+    ], '', path, postDateList(pages, arg));
 
     let smallPost = (page, args) => [
         '<article class="article-main">',
@@ -335,9 +336,9 @@ module.exports = main => {
                         escapeHTML(page.article.title),
                     '</a>',
                 '</h1>',
-                postInfo(page.article, args),
+                postInfo(page.article),
             '</header>',
-            postTags(page.article, args, true),
+            postTags(page.article, true),
         '</article>',
     ];
 
@@ -476,7 +477,7 @@ module.exports = main => {
         return `font-size: ${fs}em;`;
     }
 
-    let tagCloud = ({tags, path, arg}) => outter([
+    let tagCloud = ({tags, path}) => outter([
         '<h1>Tag Cloud</h1>'
     ], 'Tags', path, [
         '<ul class="tag-cloud">',
@@ -484,7 +485,7 @@ module.exports = main => {
                 let total = totalTags(tags);
                 return _forIn(tags, (k, v) => [
                     '<li>',
-                        `<a href="${escapeS(arg.tags)}${escapeS(regulateName(k))}/" style="${getTagStyle(v.size(), total)}">`,
+                        `<a href="${escapeS(ext.tags)}${escapeS(regulateName(k))}/" style="${getTagStyle(v.size(), total)}">`,
                             '<i class="fas fa-tag"></i>',
                             escapeHTML(k),
                         '</a>',
