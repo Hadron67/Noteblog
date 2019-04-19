@@ -82,6 +82,25 @@ Element.prototype.html = function(c){
         });
     }
 }
+Element.prototype.value = function(c){
+    if (c === void 0){
+        if (this.elems.length === 1){
+            return this.elems[0].value;
+        }
+        else {
+            ret = [];
+            this.forEach(function(e){
+                ret.push(e.value);
+            });
+            return ret;
+        }
+    }
+    else {
+        this.forEach(function(e){
+            e.value = c;
+        });
+    }
+}
 
 function getXMLHttpRequest(){
     var xmlHttp = null;

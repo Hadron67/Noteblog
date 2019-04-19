@@ -65,6 +65,26 @@ $spacing-unit:     30px !default;
     transition-delay: 0s;
 }
 
+@mixin circle($size) {
+    height: $size;
+    width: $size;
+    line-height: $size;
+    text-align: center;
+    border-radius: 50%;
+}
+
+@mixin animate($name) {
+    @keyframes $name {
+        @content;
+    }
+    @-webkit-keyframes $name {
+        @content;
+    }
+    @-moz-keyframes $name {
+        @content;
+    }
+}
+
 $link-color: #e32d40 !default;
 $link-hover-color: #00e;
 
@@ -169,3 +189,5 @@ $z-idx-search-panel: 13;
 @import "footer.scss";
 @import "tags.scss";
 @import "page-nav.scss";
+@import "scrollbar.scss";
+@import "loading.scss";

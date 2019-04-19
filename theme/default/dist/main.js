@@ -87,6 +87,25 @@
             });
         }
     };
+    Element.prototype.value = function(c){
+        if (c === void 0){
+            if (this.elems.length === 1){
+                return this.elems[0].value;
+            }
+            else {
+                ret = [];
+                this.forEach(function(e){
+                    ret.push(e.value);
+                });
+                return ret;
+            }
+        }
+        else {
+            this.forEach(function(e){
+                e.value = c;
+            });
+        }
+    };
 
     function fn(s){
         return new Element(s);
@@ -217,72 +236,232 @@
     var btnSearch = fn('#btn-search');
     var input = fn('#search-input');
     var result = fn('#search-result');
+    var btnClear = fn('#btn-clear-search');
+    var innerContainer = fn('#search-inner');
+
+    var loading = fn('#search-loading');
+    var noResultHint = fn('#search-no-result-hint');
+    var noResult = false;
+    var isLoading = false;
 
     var search = {
         hide: function(){
             searchPanel.removeClass('show');
             overlay$1.hide();
+            noResultHint.removeClass('show');
+            loading.removeClass('show');
         },
         show: function(){
             searchPanel.addClass('show');
             overlay$1.show();
+            noResult && noResultHint.addClass('show');
+            isLoading && loading.addClass('show'); 
         },
         isShowing: function(){
             return searchPanel.hasClass('show');
+        },
+        empty: function(){
+            noResult = false;
+            noResultHint.removeClass('show');
+            result.html('');
+            innerContainer.addClass('empty');
+        },
+        unEmpty: function(){
+            innerContainer.removeClass('empty');
+        },
+        startLoading: function(){
+            isLoading = true;
+            loading.addClass('show');
+            this.unEmpty();
+        },
+        stopLoading: function(){
+            isLoading = false;
+            loading.removeClass('show');
+        },
+        setResult: function(content){
+            result.html(content);
+            this.unEmpty();
+            if (content === ''){
+                noResultHint.addClass('show');
+                noResult = true;
+            }
+            else {
+                noResultHint.removeClass('show');
+                noResult = false;
+            }
+        },
+        setNoResult: function(){
+
+        },
+        search: function(str){
+            doSearch(str, function(r){
+                if (r.length){
+                    var s = '';
+                    for (var i = 0; i < r.length; i++){
+                        s += [
+                            '<li>',
+                                '<a href="' + r[i].path + '" class="search-result-entry">',
+                                    r[i].toString(),
+                                '</a>',
+                            '</li>'
+                        ].join('');
+                    }
+                    search.setResult(s);
+                }
+                else {
+                    search.setResult('');
+                }
+            });
         }
     };
-    overlay$1.$.click(function(){
-        if (search.isShowing()){
-            search.hide();
-        }
+    searchPanel.click(function(t){
+        (t.target.id === 'search-panel' || t.target.id === 'search-inner') && search.hide();
     });
     btnSearch.click(function(){
         search.show();
     });
 
+    function MatchedElement(path, title, content){
+        this.path = path;
+        this.title = title;
+        this.content = content;
+    }
+    MatchedElement.prototype.toString = function(){
+        return '<span class="title">' + this.title + '</span>' + this.content;
+    };
+
     var content = null;
+    var regWord = /[a-zA-Z0-9-]/;
+    /**
+     * 
+     * @param {string} content 
+     * @param {RegExp} regexp 
+     */
+    function extractMatchedString(content, regexp, chars, limit){
+        var a = regexp.exec(content);
+        chars >>= 1;
+        if (a){
+            var ret = '';
+            var lastIndex = 0;
+            var segs = [];
+            while (a){
+                if (a.index > lastIndex){
+                    segs.push({
+                        start: lastIndex,
+                        len: a.index - lastIndex
+                    });
+                }
+                segs.push(a[0]);
+                lastIndex = a.index + a[0].length;
+                a = regexp.exec(content);
+            }
+            if (lastIndex < content.length){
+                segs.push({
+                    start: lastIndex,
+                    len: content.length - lastIndex
+                });
+            }
+            for (var i = 0; i < segs.length; i++){
+                var seg = segs[i];
+                if (limit > 0 && ret.length > limit){
+                    ret += '\u22ef';
+                    break;
+                }
+                if (typeof seg === 'string'){
+                    ret += '<span class="keyword">' + seg + '</span>';
+                }
+                else {
+                    if (chars > 0 && seg.len > chars * 2){
+                        var end = seg.start + seg.len;
+                        var id1 = seg.start + chars, id2 = seg.start + seg.len - chars;
+                        // Avoid breaking words
+                        while (id1 < end && regWord.test(content.charAt(id1))){
+                            id1++;
+                        }
+                        while (id2 > seg.start && regWord.test(content.charAt(id2))){
+                            id2--;
+                        }
+                        if (id1 < id2){
+                            ret += content.substr(seg.start, id1 - seg.start);
+                            ret += '\u22ef';
+                            ret += content.substr(id2, end - id2);
+                        }
+                        else {
+                            ret += content.substr(seg.start, seg.len);
+                        }
+                    }
+                    else {
+                        ret += content.substr(seg.start, seg.len);
+                    }
+                }
+            }
+            return ret;
+        }
+        else {
+            return '';
+        }
+    }
+
+    function doMatch(content, regexp){
+        var title = extractMatchedString(content.title, regexp, -1, -1);
+        var text = extractMatchedString(content.content, regexp, 20, 2048);
+        if (title !== '' || text !== ''){
+            title === '' && (title = content.title);
+            return new MatchedElement(content.path, title, text);
+        }
+        else {
+            return null;
+        }
+    }
 
     function doSearch(str, cb){
         if (content){
-            str = new RegExp(str.replace(/[ ]+/g, '|'), 'gmi');
             var ret = [];
+            var regexp; 
+            try {
+                regexp = new RegExp(str.replace(/[ ]+/g, '|'), 'gmi');
+            }
+            catch(e){
+                return;
+            }
             for (var i = 0; i < content.length; i++){
-                if (str.test(content[i].content)){
-                    ret.push(content[i]);
-                }
+                var match = doMatch(content[i], regexp);
+                match && ret.push(match);
             }
             cb(ret);
         }
         else {
+            search.startLoading();
             fn.ajax({
                 url: '/search/content.json',
                 success: function(data){
                     content = data;
-                    doSearch(str, cb);
+                    search.stopLoading();
+                    doSearch(input.value(), cb);
                 }
             });
         }
     }
 
-    input.input(function(){
-        var str = this.value.trim();
-        if (str.length > 0){
-            doSearch(str, function(r){
-                var s = '';
-                for (var i = 0; i < r.length; i++){
-                    s += [
-                        '<li>',
-                            '<a href="' + r[i].path + '" class="search-result-entry">',
-                                r[i].title,
-                            '</a>',
-                        '</li>'
-                    ].join('');
-                }
-                result.html(s);
-            });
+    btnClear.click(function(){
+        if (input.value() === ''){
+            search.hide();
         }
         else {
-            result.html('');
+            input.value('');
+            search.empty();
+        }
+    });
+
+    input.input(function(){
+        if (!isLoading){
+            var str = this.value.trim();
+            if (str.length > 0){
+                search.search(str);
+            }
+            else {
+                search.empty();
+            }
         }
     });
 

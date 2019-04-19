@@ -7,6 +7,7 @@ module.exports = async (app) => ({
     title: "Hadroncfy's Notebook",
     webRoot: 'docs/',
     domain: '124.16.113.131:8080',
+    author: 'hadroncfy',
 
     mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML',
     fontawsomeURL: 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
