@@ -34,7 +34,7 @@ module.exports = app => {
         visitCode(node) {
             if (node.lang === 'mathjax-defs'){
                 // XXX: A hack! 
-                this.text += `<div class="mathjax-defs"><script type="math/tex">%<![CDATA[${addNewLineToEnds(node.val)}%]]></script></div>`;
+                this.text += `<div class="mathjax-wrapper hidden"><script type="math/tex">%<![CDATA[${addNewLineToEnds(node.val)}%]]></script></div>`;
             }
             else
                 this.text += `<pre><code lang="${escapeS(node.lang)}">${escapeHTML(node.val)}</code></pre>`;
@@ -73,6 +73,15 @@ module.exports = app => {
                     '</div>'
                 ].join('');
             }
+        }
+        visitBlockMathjax(node) {
+            this.text += [
+                '<div class="mathjax-wrapper">',
+                    '<script type="math/tex; mode=display">',
+                        `%<![CDATA[${addNewLineToEnds(node.val)}%]]>`,
+                    '</script>',
+                '</div>'
+            ].join('');
         }
 
         enterParagraph(node){

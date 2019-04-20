@@ -62,7 +62,7 @@ $$
 
 下一篇文章我们就会用到这两种四维“基本地形”。
 
-$\Gamma\left(TM^n\right) = \left\{X\mid X:M^n\to TM^n \text{是个切向量场}\right\}.$
+$$\Gamma\left(TM^n\right) = \left\{X\mid X:M^n\to TM^n \text{是个切向量场}\right\}.$$
 
 ## 思考题
 请找出环面（即甜甜圈形）的四维类比并想出截面动画。你会发现如果用解析法会更容易得出答案，但缺乏直观性。

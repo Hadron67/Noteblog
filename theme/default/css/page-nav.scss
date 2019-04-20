@@ -19,6 +19,7 @@ $nav-btn-width: 40px;
 .page-nav {
     > div {
         text-align: center;
+        position: relative;
     }
     .btn {
         display: inline-block;
@@ -36,7 +37,7 @@ $nav-btn-width: 40px;
             background-color: $plastic-green;
             color: #fff;
         }
-        &.dotted::before {
+        &.dotted:before {
             content: "\22EF";
         }
         &.disabled {
@@ -56,5 +57,32 @@ $nav-btn-width: 40px;
             background-color: #bbb;
             color: #555;
         }
+    }
+}
+.page-nav-popup-container {
+    position: absolute;
+    z-index: 5;
+    width: 100%;
+    visibility: hidden;
+}
+ul#page-nav-popup {
+    display: inline-block;
+    list-style: none;
+    visibility: hidden;
+    background-color: #fff;
+    border-radius: 2px;
+    @include shadow-base();
+    padding: 10px;
+    max-width: 80%;
+    margin: 0 auto;
+    @include transform(scale(0));
+    @include the-transition(all);
+    > li {
+        display: inline-block;
+        margin: 0 2px;
+    }
+    &.show {
+        visibility: visible;
+        @include transform(scale(1));
     }
 }

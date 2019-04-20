@@ -6,7 +6,7 @@ module.exports = main => {
     let escapeHTML = main.helper.escapeHTML;
     let regulateName = main.helper.regulateName;
     let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    let ext = main.config.ext;
+    let ext = main.ext;
 
     function _forIn(obj, cb){
         let ret = [];
@@ -80,7 +80,7 @@ module.exports = main => {
                 '<ul class="nav-list right">',
                     [
                         {icon: '<i class="fas fa-search"></i>', path: 'javascript:;', id: 'btn-search'},
-                        {icon: '<i class="fas fa-rss"></i>', path: '/rss.xml', id: null},
+                        {icon: '<i class="fas fa-rss"></i>', path: ext.rssPath || '/rss.xml', id: null},
                     ].map(({icon, path, id}) => [
                         '<li>',
                             `<a href="${escapeS(path)}" class="nav-btn"${id ? ` id="${id}"` : ''}>`,
@@ -284,8 +284,10 @@ module.exports = main => {
     ];
     
     let post = ({article, arg, path}) => outter([
-        "<h1>Welcome to</h1>",
-        `<h1>Hadroncfy's Notebook</h1>`,
+        '<hgroup>',
+            "<h1>Welcome to</h1>",
+            `<h1>Hadroncfy's Notebook</h1>`,
+        '</hgroup>'
     ], '', path, postLike(article,
         escapeHTML(article.title),
         article.content,
@@ -387,11 +389,18 @@ module.exports = main => {
                             '</a>'
                         );
                     }
+
                     ret.push(
-                        '<a href="javascript:;" class="page-nav-mobile">',
+                        '<a href="javascript:;" id="page-nav-mobile" class="btn-popup page-nav-mobile" data-target="#page-nav-popup">',
                             (index + 1) + '/' + pagePaths.length,
                         '</a>'
                     );
+                    
+                    ret.push('<div class="page-nav-popup-container"><ul id="page-nav-popup">');
+                    for (let j = 0; j < pagePaths.length; j++){
+                        ret.push(`<li><a href="${escapeS(pagePaths[j])}" class="btn${active(j)}">${j + 1}</a></li>`);
+                    }
+                    ret.push('</ul></div>');
 
                     ret.push('<ul class="page-nav-list">');
                     let i = 0;

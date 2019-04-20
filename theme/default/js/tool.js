@@ -63,6 +63,26 @@ Element.prototype.removeClass = function(c){
         n.classList.remove(c);
     });
 }
+Element.prototype.getValue = function(getter, c){
+    if (c === void 0){
+        if (this.elems.length === 1){
+            return getter.get(this.elems[0]);
+        }
+        else {
+            ret = [];
+            this.forEach(function(e){
+                ret.push(getter.get(e.innerHTML));
+            });
+            return ret;
+        }
+    }
+    else {
+        this.forEach(function(e){
+            getter.set(e, c);
+        });
+        return this;
+    }
+}
 Element.prototype.html = function(c){
     if (c === void 0){
         if (this.elems.length === 1){
@@ -100,6 +120,12 @@ Element.prototype.value = function(c){
             e.value = c;
         });
     }
+}
+Element.prototype.attr = function(name, v){
+    return this.getValue({
+        get: function(e){ return e.getAttribute(name); },
+        set: function(e, v){ return e.setAttribute(name, v); }
+    }, v);
 }
 
 function getXMLHttpRequest(){

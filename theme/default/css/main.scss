@@ -36,7 +36,7 @@ $spacing-unit:     30px !default;
 
 @mixin underline-animation-center($bottom, $height, $color){
     position: relative;
-    &::after {
+    &:after {
         content: "";
         position: absolute;
         width: 0;
@@ -47,7 +47,7 @@ $spacing-unit:     30px !default;
         visibility: hidden;
         @include the-transition(all);
     }
-    &:hover::after, &:active::after {
+    &:hover:after, &:active:after {
         visibility: visible;
         left: 0;
         width: 100%;
@@ -110,7 +110,7 @@ body {
 
 
 
-%clearfix::before, %clearfix::after{
+%clearfix:before, %clearfix:after{
     content: "";
     display: table;
     clear: both;
@@ -177,6 +177,12 @@ ul.main-post-list {
 
 .mathjax-defs {
     display: none;
+}
+.mathjax-wrapper {
+    overflow-x: auto;
+    &.hidden {
+        display: none;
+    }
 }
 
 $z-idx-title-bar: 12;

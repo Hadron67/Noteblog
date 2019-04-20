@@ -121,12 +121,21 @@ function extractMatchedString(content, regexp, chars, limit){
         var ret = '';
         var lastIndex = 0;
         var segs = [];
+        var first = true;
         while (a){
             if (a.index > lastIndex){
                 segs.push({
                     start: lastIndex,
                     len: a.index - lastIndex
                 });
+            }
+            if (first){
+                first = false;
+            }
+            else {
+                if (a.index === lastIndex){
+                    break;
+                }
             }
             segs.push(a[0]);
             lastIndex = a.index + a[0].length;
@@ -207,15 +216,15 @@ function doMatch(content, regexp){
 }
 
 function doSearch(str, cb){
+    var regexp; 
+    try {
+        regexp = new RegExp(str.replace(/[ ]+/g, '|'), 'gmi');
+    }
+    catch(e){
+        return;
+    }
     if (content){
         var ret = [];
-        var regexp; 
-        try {
-            regexp = new RegExp(str.replace(/[ ]+/g, '|'), 'gmi');
-        }
-        catch(e){
-            return;
-        }
         for (var i = 0; i < content.length; i++){
             var match = doMatch(content[i], regexp);
             match && ret.push(match);

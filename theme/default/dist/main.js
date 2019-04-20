@@ -68,6 +68,26 @@
             n.classList.remove(c);
         });
     };
+    Element.prototype.getValue = function(getter, c){
+        if (c === void 0){
+            if (this.elems.length === 1){
+                return getter.get(this.elems[0]);
+            }
+            else {
+                ret = [];
+                this.forEach(function(e){
+                    ret.push(getter.get(e.innerHTML));
+                });
+                return ret;
+            }
+        }
+        else {
+            this.forEach(function(e){
+                getter.set(e, c);
+            });
+            return this;
+        }
+    };
     Element.prototype.html = function(c){
         if (c === void 0){
             if (this.elems.length === 1){
@@ -105,6 +125,12 @@
                 e.value = c;
             });
         }
+    };
+    Element.prototype.attr = function(name, v){
+        return this.getValue({
+            get: function(e){ return e.getAttribute(name); },
+            set: function(e, v){ return e.setAttribute(name, v); }
+        }, v);
     };
 
     function fn(s){
@@ -344,12 +370,21 @@
             var ret = '';
             var lastIndex = 0;
             var segs = [];
+            var first = true;
             while (a){
                 if (a.index > lastIndex){
                     segs.push({
                         start: lastIndex,
                         len: a.index - lastIndex
                     });
+                }
+                if (first){
+                    first = false;
+                }
+                else {
+                    if (a.index === lastIndex){
+                        break;
+                    }
                 }
                 segs.push(a[0]);
                 lastIndex = a.index + a[0].length;
@@ -415,15 +450,15 @@
     }
 
     function doSearch(str, cb){
+        var regexp; 
+        try {
+            regexp = new RegExp(str.replace(/[ ]+/g, '|'), 'gmi');
+        }
+        catch(e){
+            return;
+        }
         if (content){
             var ret = [];
-            var regexp; 
-            try {
-                regexp = new RegExp(str.replace(/[ ]+/g, '|'), 'gmi');
-            }
-            catch(e){
-                return;
-            }
             for (var i = 0; i < content.length; i++){
                 var match = doMatch(content[i], regexp);
                 match && ret.push(match);
@@ -465,133 +500,21 @@
         }
     });
 
-    // var pwd = '/static/js/';
-    // function load(src, cb){
-    //     var node = A.createElement('script');
-    //     node.async = true;
-    //     node.src = src;
-    //     cb && node.addEventListener('load', cb);
-    //     A.body.appendChild(node);
-    // }
-
-    // load(pwd + 'search.js');
-    // $.document.click();
-
-    // var collapseBtn = A.getElementById('btn-collapse');
-    // var collapseList = A.getElementById('main-nav-list');
-    // var btnCloseMenu = A.getElementById('btn-close-menu');
-    // var overlays = A.getElementsByClassName('overlay');
-    // var btnSearch = A.getElementById('btn-search');
-    // var totop = A.getElementById('totop');
-
-    // var search = A.getElementById('search-panel');
-
-    // function showOverlay(){
-    //     for (var i = 0, _a = overlays; i < _a.length; i++){
-    //         _a[i].classList.add('show');
-    //     }
-    // }
-
-    // function hideOverlay(){
-    //     for (var i = 0, _a = overlays; i < _a.length; i++){
-    //         _a[i].classList.remove('show');
-    //     }
-    // }
-
-    // function showMenu(){
-    //     collapseList.classList.add('show');
-    //     showOverlay();
-    // }
-
-    // function hideMenu(){
-    //     collapseList.classList.remove('show');
-    //     hideOverlay();
-    // }
-
-    // function isMenuShowing(){
-    //     return collapseList.classList.contains('show');
-    // }
-
-    // function isSearchShowing(){
-    //     return search.classList.contains('show');
-    // }
-
-    // function getPos(t){
-    //     var ret = t.offsetTop;
-    //     while (t.offsetParent){
-    //         t = t.offsetParent;
-    //         ret += t.offsetTop;
-    //     }
-    //     return ret;
-    // }
-
-    // collapseBtn.addEventListener('click', function(){
-    //     showMenu();
-    // });
-    // btnCloseMenu.addEventListener('click', function(){
-    //     hideMenu();
-    // });
-
-    // for (var i = 0, _a = overlays; i < _a.length; i++){
-    //     _a[i].addEventListener('click', function(){
-    //         if (isMenuShowing()){
-    //             hideMenu();
-    //         }
-    //         if (isSearchShowing()){
-    //             hideOverlay();
-    //             search.classList.remove('show');
-    //         }
-    //     });
-    // }
-
-    // btnSearch.addEventListener('click', function(){
-    //     search.classList.add('show');
-    //     showOverlay();
-    // });
-
-    // var nav = A.getElementById('main-nav');
-    // var navPos = getPos(nav);
-
-    // function fixHeading(pos){
-    //     if (pos > navPos){
-    //         nav.classList.add('fixed');
-    //     }
-    //     else {
-    //         nav.classList.remove('fixed');
-    //         navPos = getPos(nav);
-    //     }
-    // }
-
-    // function scrollToTop(pos){
-    //     var div = 10, i = 0;
-    //     var dh = pos / div;
-    //     var interval = setInterval(function(){
-    //         if (i >= div){
-    //             clearInterval(interval);
-    //         }
-    //         window.scrollTo(0, Math.ceil(pos - dh * i++) | 0);
-    //     }, 20);
-    // }
-
-    // A.addEventListener('scroll', function(e){
-    //     var pos = A.documentElement.scrollTop || A.body.scrollTop;
-    //     fixHeading(pos);
-    //     // Schmitt trigger
-    //     if (pos > 200 && !totop.classList.contains('show')){
-    //         totop.classList.add('show');
-    //     }
-    //     if (pos < 150 && totop.classList.contains('show')){
-    //         totop.classList.remove('show');
-    //     }
-    // });
-    // A.addEventListener('load', function(){
-    //     fixHeading();
-    // });
-    // totop.addEventListener('click', function(){
-    //     var pos = A.documentElement.scrollTop || A.body.scrollTop;
-    //     scrollToTop(pos);
-    // });
-
-    // fixHeading();
+    var elems = fn('.btn-popup');
+    var targets = [];
+    elems.click(function(){
+        var cela = fn(this);
+        fn(cela.attr('data-target')).addClass('show');
+    });
+    elems.forEach(function(e){
+        e = fn(fn(e).attr('data-target'));
+        e && targets.push(e);
+    });
+    fn(document).click(function(event){
+        var id = event.target.id;
+        for (var i = 0; i < targets.length; i++){
+            id !== targets[i].elems[0].id && id !== elems.elems[i].id && targets[i].removeClass('show');
+        }
+    });
 
 }));

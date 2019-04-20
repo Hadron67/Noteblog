@@ -42,15 +42,21 @@ $article-small-inner-padding: 20px;
     p, blockquote, hr, h1, div.head2-wrapper, div.p-with-img, h3, h4, h5, pre, ul, ol {
         // margin-bottom: $paragraph-clearance;
         margin-top: 15px;
+        &:first-child {
+            margin-top: 0px;
+        }
     }
+    .hidden, .mathjax-wrapper {
+        + * {
+            margin-top: 0px;
+        }
+    }
+    
     p, ul, ol {
         line-height: 1.5;
     }
     ul {
         list-style: disc;
-    }
-    p:first-child, .p-with-img:first-child {
-        margin-top: 0;
     }
     div.p-with-img {
         > p {
@@ -59,7 +65,7 @@ $article-small-inner-padding: 20px;
         &.partial {
             margin-top: 0;
             > p {
-                &::before {
+                &:before {
                     display: none;
                 }
             }
@@ -106,7 +112,7 @@ $article-small-inner-padding: 20px;
                 margin-top: 0;
             }
         }
-        p::before {
+        p:before {
             content: "\3000\3000";
             display: inline;
         }
