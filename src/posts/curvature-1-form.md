@@ -31,5 +31,6 @@ Since the second is more common, we will use it in the rest of this article.
 ### Connection 1-form
 Instead of work in the coordinate tetrad, as one usually did in general relativity, we choose an othonormal tetrad $\{e_\mu\}$, in which case the connection is $\gamma^\mu_{\alpha\beta}$, satisfies
 $$
-\nabla_a e_\mu = \gamma^\nu_{a\mu} e_\nu
+\nabla_a e_\mu = \gamma^\nu_{a\mu} e_\nu = (\omega^\nu{}_\mu)_a e_\nu,
 $$
+where $\omega^\nu{}_\mu \equiv \gamma^\nu_{\rho\mu} e^\rho$ is **connection 1-form**.

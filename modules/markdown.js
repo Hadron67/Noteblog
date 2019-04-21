@@ -13,8 +13,25 @@ async function readPostFiles(app, dirs){
 
 module.exports = (posts, pathBase) => async (app) => {
     posts = await readPostFiles(app, posts);
-    posts = posts.map(p => app.markdown.register(app.markdown.dateToPath(pathBase), p));
-    
-    let listener = page => app.extend.blogManager.updatePage(page);
-    posts.forEach(p => p.on('update', listener));
+    app.on('load', () => {
+        app.registerSource(new Promise((resolve, reject) => {
+            posts = posts.map(p => app.markdown.register(app.markdown.dateToPath(pathBase), p));
+            let postIDs = {};
+
+            let count = 0;
+            let onUpdate = page => app.extend.blogManager.updatePage(page);
+            let onRemove = page => app.extend.blogManager.removePage(page);
+            let onCompiled = page => {
+                delete postIDs[page.id];
+                let len = Object.keys(postIDs).length;
+                len === 0 && resolve();
+            };
+            posts.forEach(p => {
+                postIDs[p.id] = true;
+                p.on('update', onUpdate);
+                p.on('remove', onRemove);
+                p.on('compiled', onCompiled);
+            });
+        }));
+    });
 }

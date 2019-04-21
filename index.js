@@ -43,6 +43,9 @@ async function main(){
     
     await Promise.all(config.staticDirs.map(dir => registerStaticDir(app, config.webRoot, dir)));
     app.emit('load');
+
+    await app.waitSources();
+    app.logger.info("All pages registered");
 }
 
 main().then(() => app.startServer(8080)).catch(e => {

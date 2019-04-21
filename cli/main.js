@@ -1,54 +1,49 @@
 'use strict';
+
 const path = require('path');
 let app = require('../lib/main.js')();
 
-async function registerStaticDir(app, webRoot, dir){
-    (await app.helper.readFiles(webRoot + dir)).forEach(f => app.file.register('/' + dir + f, webRoot + dir + f, true));
-}
 
-app.registerModule = (src, cb) => {
-    function refresh(){
-        try {
-            delete require.cache[require.resolve(src)];
-            let m = require(src);
-            if (typeof m === 'function'){
-                m(app);
-                app.logger.info(`Module ${src} loaded`);
-                if (cb){
-                    cb();
-                    cb = null;
-                }
-            }
+function parseArg(argv){
+    let configFile = 'blog.config.js';
+    if (argv[0] === '-c'){
+        argv.shift();
+        if (argv.length > 0){
+            configFile = argv.shift();
         }
-        catch(e){
-            app.logger.err(`Failed to load module ${src}: ${e.stack}`);
+        else {
+            console.log('File name expected after -c option');
+            return null;
         }
     }
-    refresh();
-    app.watch(src, (event, fn) => event === 'change' && refresh());
-}
-
-async function init(configFile){
-    let config = await (require(configFile))(app);
-    app.config = config;
-
-    let asyncPlugins = [];
-    for (let p of config.plugins){
-        let r = p(app);
-        if (r && r.then && r.catch){
-            asyncPlugins.push(r);
-        }
+    if (argv.length > 0){
+        return path.resolve(configFile);
     }
-    asyncPlugins.length > 0 && (await Promise.all(asyncPlugins));
-    
-    await Promise.all(config.staticDirs.map(dir => registerStaticDir(app, config.webRoot, dir)));
-    app.emit('load');
+    else {
+        console.log('Command expected');
+        return null;
+    }
 }
 
-function parseArg(args){
-    
+async function main(argv){
+    let configFile = parseArg(argv);
+    if (configFile === null){
+        return -1;
+    }
+    else {
+        let ret = app.cli.exec(argv);
+        if (ret && ret.then){
+            ret = await ret;
+        }
+        return ret;
+    }
 }
 
-module.exports = args => {
-    
+module.exports = async (args) => {
+    main(argv)
+    .then(c => process.exit(c))
+    .catch(err => {
+        app.logger.err(`Uncaught ${err.stack}`);
+        process.exit(-1);
+    });
 }

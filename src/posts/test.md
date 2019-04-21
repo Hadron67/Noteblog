@@ -3,6 +3,7 @@ layout: post
 date: 2019-3-30 14:28:38 +0800
 title: Test
 category: Note
+disabled: true
 ---
 ```mathjax-defs
 \def\dd{\mathrm{d}}

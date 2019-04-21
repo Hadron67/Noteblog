@@ -39,6 +39,7 @@ module.exports = async (app) => ({
         app.rss({
             path: '/rss.xml',
             limit: 10
-        })
+        }),
+        app.simpleMarkdownFilter()
     ]
 });
