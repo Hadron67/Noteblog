@@ -11,6 +11,6 @@ module.exports = params => async (app) => {
         app.scss.register('/css/main.css', (await app.helper.readFiles(_('css/'), 'main.scss')).map(f => _('css/') + f));
         app.file.register('/js/main.js', _('dist/main.js'));
     
-        await app.helper.registerModule(_('templates/templates.js'));
+        await app.hot.register(_('templates/templates.js'));
     });
 };

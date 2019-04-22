@@ -1,7 +1,6 @@
 'use strict';
 
 const theme = require('./theme/default/index.js');
-const markdownPosts = require('./modules/markdown.js');
 
 module.exports = async (app) => ({
     title: "Hadroncfy's Notebook",
@@ -12,10 +11,10 @@ module.exports = async (app) => ({
     mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML',
     fontawsomeURL: 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
 
-    staticDirs: [
-        'static/img/2016/',
-        'static/img/2019/'
-    ],
+    // staticDirs: [
+    //     'static/img/2016/',
+    //     'static/img/2019/'
+    // ],
 
     links: {
         'zzy(BG6GCZ)': 'https://zzy.blog.ustc.edu.cn/',
@@ -24,15 +23,16 @@ module.exports = async (app) => ({
     },
     
     plugins: [
-        markdownPosts([
-            'src/posts/',
-            'src/posts-old/'
-        ], '/articles/'),
+        app.staticDirs('static'),
+        app.markdownPost([
+            'src/posts',
+            'src/posts-old'
+        ], '/articles'),
         app.categoryManager({
             mainPage: {path: '/', pagesPerPage: 5},
-            archive: {path: '/archive/', pagesPerPage: 20},
-            tags: {path: '/tags/', pagesPerPage: 20},
-            categories: {path: '/category/', pagesPerPage: 20},
+            archive: {path: '/archive', pagesPerPage: 20},
+            tags: {path: '/tags', pagesPerPage: 20},
+            categories: {path: '/category', pagesPerPage: 20},
         }),
         theme(),
         app.indexGenerator('/search/content.json'),

@@ -31,15 +31,22 @@ async function main(argv){
         return -1;
     }
     else {
+        await app.applyConfig(require(configFile));
         let ret = app.cli.exec(argv);
-        if (ret && ret.then){
-            ret = await ret;
+        if (typeof ret === 'string'){
+            console.log(ret);
+            return -1;
         }
-        return ret;
+        else {
+            if (ret && ret.then){
+                ret = await ret;
+            }
+            return ret;
+        }
     }
 }
 
-module.exports = async (args) => {
+module.exports = (argv) => {
     main(argv)
     .then(c => process.exit(c))
     .catch(err => {

@@ -1,5 +1,7 @@
 'use strict';
 
+const pathd = require('path');
+
 module.exports = main => {
 
     let escapeS = main.helper.escapeS;
@@ -96,10 +98,10 @@ module.exports = main => {
                         '<a class="nav-btn" id="btn-close-menu" href="javascript:;"><i class="fas fa-arrow-left"></i></a>',
                     '</li>',
                     [
-                        {name: 'Home', icon: '<i class="fas fa-home"></i>', path: ext.blog},
-                        {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: ext.archive},
-                        {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: ext.category},
-                        {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: ext.tags},
+                        {name: 'Home', icon: '<i class="fas fa-home"></i>', path: pathd.join(ext.blog, '/') },
+                        {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: pathd.join(ext.archive, '/')},
+                        {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: pathd.join(ext.category, '/')},
+                        {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: pathd.join(ext.tags, '/')},
                         {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes/'},
                         {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
                     ].map(({name, icon, path}) => [
@@ -203,10 +205,10 @@ module.exports = main => {
     
     function articleCategoryList(pathBase, categoryPath){
         let list = [];
-        let path = pathBase;
+        let path0 = pathBase;
         for (let name of categoryPath){
-            path += `${name}/`;
-            list.push({name, path});
+            path0 = pathd.join(path0, name, '/');
+            list.push({name, path: path0});
         }
         return list;
     }
@@ -260,7 +262,7 @@ module.exports = main => {
         return [
             `<footer class="post-footer${small ? ' small' : ''}">`,
                 article.tags.map(tag => [
-                    `<a class="btn-tag" href="${escapeS(ext.tags)}${regulateName(tag)}/" title="Tag: ${escapeS(tag)}">`,
+                    `<a class="btn-tag" href="${pathd.join(escapeS(ext.tags), regulateName(tag), '/')}" title="Tag: ${escapeS(tag)}">`,
                         `<i class="fas fa-tag"></i>${escapeHTML(tag)}`,
                     '</a>',
                 ]),
@@ -460,18 +462,18 @@ module.exports = main => {
                     '<span class="category-divider">',
                         '<i class="fas fa-chevron-right"></i>',
                     '</span>',
-                    `<a href="${escapeS(pathBase)}${n.getPath().map(p => regulateName(p.name) + '/').join('')}">${escapeHTML(n.name)}</a>`,
+                    `<a href="${escapeS(pathBase)}${pathd.join(n.getPath().map(p => regulateName(p.name)).join('/'), '/')}">${escapeHTML(n.name)}</a>`,
                 ]),
             '</header>',
             () => {
                 let subcat = node.getSubcategories();
-                let p = pathBase + node.getPath().map(n => regulateName(n.name) + '/').join('');
+                let p = pathd.join(pathBase, node.getPath().map(n => regulateName(n.name)).join('/'), '/');
                 if (subcat.length > 0){
                     return [
                         '<h3 class="post-list-date">Subcategories</h3>',
                         '<ul class="subcategory-container">',
                             subcat.map(c => [
-                                `<li><a class="category-btn btn-category" href="${p}${regulateName(c)}/">`,
+                                `<li><a class="category-btn btn-category" href="${pathd.join(p, regulateName(c), '/')}">`,
                                     '<span class="category-file-icon"><i class="fas fa-folder-open"></i></span>',
                                     escapeHTML(c),
                                 `</a></li>`
