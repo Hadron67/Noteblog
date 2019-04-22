@@ -520,7 +520,7 @@ module.exports = main => {
                 let total = totalTags(tags);
                 return _forIn(tags, (k, v) => [
                     '<li>',
-                        `<a href="${escapeS(ext.tags)}${escapeS(regulateName(k))}/" style="${getTagStyle(v.size(), total)}">`,
+                        `<a href="${pathd.join(escapeS(ext.tags), escapeS(regulateName(k)), '/')}" style="${getTagStyle(v.size(), total)}">`,
                             '<i class="fas fa-tag"></i>',
                             escapeHTML(k),
                         '</a>',

@@ -11,11 +11,6 @@ module.exports = async (app) => ({
     mathjaxURL: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML',
     fontawsomeURL: 'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
 
-    // staticDirs: [
-    //     'static/img/2016/',
-    //     'static/img/2019/'
-    // ],
-
     links: {
         'zzy(BG6GCZ)': 'https://zzy.blog.ustc.edu.cn/',
         'wxy': 'https://wxyhly.github.io/',
@@ -40,6 +35,7 @@ module.exports = async (app) => ({
             path: '/rss.xml',
             limit: 10
         }),
-        app.simpleMarkdownFilter()
+        app.simpleMarkdownFilter(),
+        app.server()
     ]
 });

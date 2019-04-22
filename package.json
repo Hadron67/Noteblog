@@ -9,19 +9,15 @@
   "keywords": [
     "blog"
   ],
+  "bin": "cli/noteblog",
   "author": "hadroncfy",
   "license": "MIT",
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
-    "@babel/plugin-transform-runtime": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
     "install": "^0.12.2",
     "mocha": "^6.0.2",
-    "npm": "^6.9.0",
-    "rollup-plugin-babel": "^4.3.2"
+    "npm": "^6.9.0"
   },
   "dependencies": {
-    "@babel/core": "^7.4.3",
     "chalk": "^2.4.2",
     "js-yaml": "^3.13.0",
     "log": "^5.0.0",

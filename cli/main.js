@@ -48,7 +48,7 @@ async function main(argv){
 
 module.exports = (argv) => {
     main(argv)
-    .then(c => process.exit(c))
+    // .then(c => process.exit(c))
     .catch(err => {
         app.logger.err(`Uncaught ${err.stack}`);
         process.exit(-1);
