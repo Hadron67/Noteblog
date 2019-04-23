@@ -4,7 +4,7 @@ const theme = require('./theme/default/index.js');
 
 module.exports = async (app) => ({
     title: "Hadroncfy's Notebook",
-    webRoot: 'docs/',
+    webRoot: 'dist/',
     domain: '124.16.112.225:8080',
     author: 'hadroncfy',
 
@@ -18,7 +18,7 @@ module.exports = async (app) => ({
     },
     
     plugins: [
-        app.staticDirs('static'),
+        app.staticDirs('src/static', '/static'),
         app.markdownPost([
             'src/posts',
             'src/posts-old'
@@ -36,6 +36,7 @@ module.exports = async (app) => ({
             limit: 10
         }),
         app.simpleMarkdownFilter(),
-        app.server()
+        app.server(),
+        app.generator()
     ]
 });

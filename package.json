@@ -1,13 +1,14 @@
 {
   "name": "noteblog",
   "version": "1.0.0",
-  "description": "A simple react-like blog generator",
+  "description": "A simple plugin-based blog generator",
   "main": "index.js",
   "scripts": {
     "test": "mocha tests/"
   },
   "keywords": [
-    "blog"
+    "blog",
+    "blog-generator"
   ],
   "bin": "cli/noteblog",
   "author": "hadroncfy",
@@ -20,9 +21,9 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "js-yaml": "^3.13.0",
-    "log": "^5.0.0",
     "mathjax-node": "^2.1.1",
     "mime": "^2.4.0",
+    "mkdirp": "^0.5.1",
     "node-sass": "^4.11.0"
   }
 }

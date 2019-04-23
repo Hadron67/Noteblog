@@ -1,6 +1,6 @@
 /* eslint-env node, mocha */
 
-const md = require('../lib/modules/markdown/markdown.js');
+const md = require('../lib/markdown/markdown.js');
 const assert = require('assert');
 
 let parser = md.createParser();
