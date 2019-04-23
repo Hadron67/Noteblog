@@ -4,7 +4,7 @@ const theme = require('./theme/default/index.js');
 
 module.exports = async (app) => ({
     title: "Hadroncfy's Notebook",
-    webRoot: 'dist/',
+    outDir: 'dist/',
     domain: '124.16.112.225:8080',
     author: 'hadroncfy',
 
@@ -16,6 +16,8 @@ module.exports = async (app) => ({
         'wxy': 'https://wxyhly.github.io/',
         'futantan': 'https://www.futantan.com/'
     },
+
+    imagePath: '/static/img',
     
     plugins: [
         app.staticDirs('src/static', '/static'),
@@ -29,7 +31,9 @@ module.exports = async (app) => ({
             tags: {path: '/tags', pagesPerPage: 20},
             categories: {path: '/category', pagesPerPage: 20},
         }),
-        theme(),
+        theme({
+            oldBlogTime: '2016-07-24 15:45:26'
+        }),
         app.indexGenerator('/search/content.json'),
         app.rss({
             path: '/rss.xml',

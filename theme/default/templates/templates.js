@@ -9,6 +9,7 @@ module.exports = main => {
     let regulateName = main.helper.regulateName;
     let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     let ext = main.ext;
+    let oldBlogTime = ext.oldBlogTime;
 
     function _forIn(obj, cb){
         let ret = [];
@@ -102,8 +103,8 @@ module.exports = main => {
                         {name: 'Archive', icon: '<i class="fas fa-archive"></i>', path: pathd.join(ext.archive, '/')},
                         {name: 'Categories', icon: '<i class="fas fa-folder-open"></i>', path: pathd.join(ext.category, '/')},
                         {name: 'Tags', icon: '<i class="fas fa-tags"></i>', path: pathd.join(ext.tags, '/')},
-                        {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes/'},
-                        {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
+                        // {name: 'Programmes', icon: '<i class="fas fa-desktop"></i>', path: '/programmes/'},
+                        // {name: 'About', icon: '<i class="fas fa-address-card"></i>', path: '/about/'}
                     ].map(({name, icon, path}) => [
                         `<li${active === name ? ' class="active"' : ''}>`,
                             `<a href="${escapeS(path)}" class="nav-btn collapse">`,
@@ -295,14 +296,29 @@ module.exports = main => {
         article.content,
         arg
     ));
+
+    let checkOldPost = (pages, cb) => {
+        let old = pages[0] && pages[0].article.date <= oldBlogTime;
+        let ret = [];
+        for (let p of pages){
+            let firstOldPost = false;
+            if (!old && p.article.date <= oldBlogTime){
+                old = true;
+                firstOldPost = true;
+            }
+            ret.push(cb(p, firstOldPost));
+        }
+        return ret;
+    }
     
     let page = ({pages, path, arg}) => outter([
         "<h1>Welcome to</h1>",
         `<h1>Hadroncfy's Notebook</h1>`,
     ], 'Home', path, [
         '<ul class="main-post-list">',
-        pages.getPages().map(page => [
+        checkOldPost(pages.getPages(), (page, firstOldPost) => [
             '<li>',
+                firstOldPost ? oldBlogHint : '',
                 postLike(page.article,
                     `<a class="article-title-link" href="${escapeS(page.path)}">${escapeHTML(page.article.title)}</a>`, [
                         page.article.summary,
@@ -314,20 +330,27 @@ module.exports = main => {
                 ),
             '</li>'
         ]),
+        // pages.getPages().map(page => [
+        // ]),
         '</ul>',
         pageNav(pages.pagePaths, pages.index)
     ]);
     
     function partitionByDate(pages){
         let ret = [];
+        let old = pages[0] && pages[0].article.date <= oldBlogTime;
         for (let p of pages){
             let top = ret[ret.length - 1];
             let date = p.article.date;
-            if (top && top.date.getFullYear() === date.getFullYear() && top.date.getMonth() === date.getMonth()){
+            if (!old && date <= oldBlogTime){
+                old = true;
+                ret.push({date, pages: [p], firstOldList: true});
+            }
+            else if (top && top.date.getFullYear() === date.getFullYear() && top.date.getMonth() === date.getMonth()){
                 top.pages.push(p);
             }
             else {
-                ret.push({date, pages: [p]});
+                ret.push({date, pages: [p], firstOldList: false});
             }
         }
         return ret;
@@ -352,11 +375,18 @@ module.exports = main => {
         '</article>',
     ];
 
+    let oldBlogHint = [
+        '<div class="old-blog-hint">',
+            '<span class="outter"><span class="inner">Belows are old posts</span></span>',
+            '<hr class="divider">',
+        '</div>'
+    ];
 
     let postDateList = (pages, args) => [
         '<ul class="post-date-list">',
-            partitionByDate(pages.getPages()).map(({date, pages}) => [
+            partitionByDate(pages.getPages()).map(({date, pages, firstOldList}) => [
                 '<li>',
+                    firstOldList ? oldBlogHint : '',
                     `<h2 class="post-list-date">${monthNames[date.getMonth()]}, ${escapeHTML(date.getFullYear().toString())}</h2>`,
                     '<ul class="post-list">',
                         pages.map(p => [
@@ -457,7 +487,7 @@ module.exports = main => {
     ], 'Categories', path, [
         '<div class="category-outter-container">',
             '<header class="category-path">',
-                `<a href="${escapeS(pathBase)}">Category</a>`,
+                `<a href="${pathd.join(escapeS(pathBase), '/')}">Category</a>`,
                 node.getPath().map(n => [
                     '<span class="category-divider">',
                         '<i class="fas fa-chevron-right"></i>',
@@ -507,7 +537,7 @@ module.exports = main => {
     }
 
     function getTagStyle(len, total){
-        let from = 1, to = 3;
+        let from = 1, to = 4;
         let fs = from + (to - from) * len / total;
         return `font-size: ${fs}em;`;
     }

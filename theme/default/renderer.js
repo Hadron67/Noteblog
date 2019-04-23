@@ -1,5 +1,5 @@
 'use strict';
-
+const pathd = require('path');
 
 function addNewLineToEnds(s){
     if (s.charAt(0) !== '\n'){
@@ -40,7 +40,8 @@ module.exports = app => {
                 this.text += `<pre><code lang="${escapeS(node.lang)}">${escapeHTML(node.val)}</code></pre>`;
         }
         visitImage(node) {
-            let src = /^https?:\/\//.test(node.src) ? node.src : `/static/img/${escapeS(node.src)}`;
+            let base = app.config.imagePath || '/';
+            let src = /^https?:\/\//.test(node.src) ? escapeS(node.src) : pathd.join(base, escapeS(node.src));
             let inline = false, float = '', styles = [];
             for (let a of node.attrs){
                 switch (a){

@@ -213,7 +213,7 @@ $tag-btn-padding: 12px;
 
 .btn-tag {
     display: inline-block;
-    color: $base-font-color;
+    // color: $base-font-color;
     background-color: #eee;
     // background-color: $top-border-color;
     // @include shadow-base();
@@ -222,7 +222,8 @@ $tag-btn-padding: 12px;
     padding: 5px 10px;
     border-radius: 5px;
     border: #eee solid 1px;
-    // color: #eee;
+    color: #777;
+    font-size: $base-font-size * 0.9;
     
     @include the-transition(all);
     @include pressed() {
@@ -299,5 +300,36 @@ $article-info-color: #999;
             background-color: $top-border-color;
             color: #fff;
         }
+    }
+}
+.old-blog-hint {
+    margin: 20px 0 50px 0;
+    text-align: center;
+    position: relative;
+    span {
+        display: inline-block;
+        color: #999;
+    }
+    span.inner {
+        background-color: #ccc;
+        // padding: 10px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 15px;
+        padding: 0 10px;
+    }
+    span.outter {
+        padding: 0 10px;
+        background-color: $body-background;
+    }
+    .divider {
+        background-color: #ccc;
+        border: 0;
+        height: 1px;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        z-index: -1;
     }
 }
