@@ -2,7 +2,7 @@
   "name": "noteblog",
   "version": "1.0.0",
   "description": "A simple plugin-based blog generator",
-  "main": "index.js",
+  "main": "lib/main.js",
   "scripts": {
     "test": "mocha tests/"
   },
