@@ -10,6 +10,7 @@ const help =
 
 Options:
     ${chalk.bold('-c, --config')} <config file>   Specify config file (default is blog.config.js);
+    ${chalk.bold('-D')}<name>=<value>             Set variable <name> to <value>, which can be accessed through app.env[name] in config files;
     ${chalk.bold('-h, --help  ')}                 Display this help message and exit.
 
 Available commands are determined by plugins specified in config file.
@@ -46,7 +47,20 @@ function parseArg(argv){
             case '--version':
                 argv.shift();
                 ret.version = true;
-            default: break out;
+            default:
+                if (/^-D/.test(argv[0])){
+                    let name = argv[0].substr(2, argv[0].length - 2);
+                    argv.shift();
+                    let i = name.indexOf('=');
+                    if (i !== -1){
+                        app.env[name.substr(0, i + 1)] = name.substr(i, name.length - 1);
+                    }
+                    else {
+                        app.env[name] = true;
+                    }
+                }
+                else 
+                    break out;
         }
     }
 
